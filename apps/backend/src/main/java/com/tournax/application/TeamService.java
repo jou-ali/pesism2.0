@@ -117,7 +117,18 @@ public class TeamService {
         if (tp == null) {
             return TeamSetupStatusResponse.invalid();
         }
-        return new TeamSetupStatusResponse(true, tp.getPlayer().getName(), tp.getTeamName());
+        Tournament tournament = tournamentRepository.findById(entry.getTournamentId()).orElse(null);
+        boolean locked = tournament == null || tournament.getStatus() != TournamentStatus.registration;
+        return new TeamSetupStatusResponse(
+            true,
+            tp.getPlayer().getName(),
+            tp.getPlayer().getAvatarUrl(),
+            tp.getTeamName(),
+            tp.getCrestUrl(),
+            tp.getPrimaryColor(),
+            tp.getSecondaryColor(),
+            locked
+        );
     }
 
     @Transactional

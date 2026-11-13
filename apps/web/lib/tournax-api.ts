@@ -379,7 +379,16 @@ export function issueTeamSetupLink(playerId: string, season = CURRENT_SEASON) {
   });
 }
 
-export type TeamSetupStatus = { valid: boolean; playerName: string | null; teamName: string | null };
+export type TeamSetupStatus = {
+  valid: boolean;
+  playerName: string | null;
+  avatarUrl: string | null;
+  teamName: string | null;
+  crestUrl: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  locked: boolean;
+};
 
 export function getTeamSetupStatus(token: string) {
   return publicFetch<TeamSetupStatus>(`/api/v1/team-setup/${token}`);

@@ -112,7 +112,7 @@ ul{list-style:none;margin:0;padding:0}
 /* =========================================================
    SHARED COMPONENTS
    ========================================================= */
-.h2{font-family:var(--font-headline);font-size:var(--fs-h2);line-height:1;font-weight:400;letter-spacing:var(--tracking-headline);text-transform:uppercase;overflow-wrap:break-word;min-width:0}
+.h2{font-family:var(--font-headline);font-size:var(--fs-h2);line-height:1;font-weight:400;letter-spacing:var(--tracking-headline);text-transform:uppercase;overflow-wrap:normal;word-break:keep-all;min-width:0}
 .lead{font-size:var(--fs-lead);color:var(--muted-foreground);max-width:40rem}
 
 /* Split line reveal — visible by default; hidden state only once JS confirms it can animate it back in */
@@ -216,7 +216,7 @@ ul{list-style:none;margin:0;padding:0}
 .trophy-stage{position:relative;display:flex;align-items:center;justify-content:center;width:100%;padding-block:clamp(1.5rem,5vw,3rem)}
 .trophy-stage__ground{position:absolute;z-index:-1;bottom:clamp(1rem,4vw,2.25rem);width:min(60%,16rem);height:2rem;border-radius:50%;background:radial-gradient(ellipse,rgba(var(--color-paper-rgb),.8) 0%,transparent 72%);filter:blur(6px)}
 .hero__trophy-img{width:min(62%,19rem);height:auto;filter:drop-shadow(0 1.5rem 2.5rem rgba(var(--color-paper-rgb),.75))}
-.hero__title{font-family:var(--font-headline);font-size:var(--fs-hero);line-height:1;font-weight:400;letter-spacing:var(--tracking-headline);text-transform:uppercase;overflow-wrap:break-word;min-width:0}
+.hero__title{font-family:var(--font-headline);font-size:var(--fs-hero);line-height:1;font-weight:400;letter-spacing:var(--tracking-headline);text-transform:uppercase;overflow-wrap:normal;word-break:keep-all;min-width:0}
 .hero__title .row{display:block}
 .word{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.06em;margin-bottom:-.06em}
 .js .word>span{transform:translate3d(0,112%,0) rotate(5deg)}
@@ -396,6 +396,34 @@ ul{list-style:none;margin:0;padding:0}
 @media (min-width:700px){.reg-players{grid-template-columns:repeat(4,1fr)}}
 .reg-player{display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;padding:1rem}
 .reg-player__name{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+
+/* =========================================================
+   TEAM SETUP (/team-setup/[token])
+   ========================================================= */
+/* Player already registered — hide the header's "Register now" CTA on this one page. */
+body:has([data-page="team-setup"]) .header__cta{display:none}
+
+.team-setup{padding-top:calc(var(--header-h) + 2.5rem);padding-bottom:3rem}
+@media (min-width:1024px){.team-setup{min-height:calc(100vh - var(--header-h));display:flex;align-items:center;padding-top:var(--header-h);padding-bottom:0}}
+.team-setup__grid{display:grid;grid-template-columns:1fr;gap:2rem;width:100%}
+@media (min-width:1024px){.team-setup__grid{grid-template-columns:1fr 1fr;gap:3rem;align-items:center}}
+.team-setup__eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin:0 0 .75rem}
+.team-setup__heading{font-size:clamp(2.5rem,6vw,4.5rem)}
+.team-setup__lead{margin-top:1rem}
+.team-setup__registered{display:flex;align-items:center;gap:.6rem;margin-top:1.75rem;color:var(--color-ink-2);font-size:.9rem}
+.team-setup__avatar{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:none;background:var(--navy-2)}
+.team-setup__avatar img{width:100%;height:100%;object-fit:cover}
+
+.team-setup__preview{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:var(--bg);border-radius:var(--r-row);margin-bottom:1.25rem}
+.team-setup__preview-text{display:flex;flex-direction:column;gap:.2rem;min-width:0}
+.team-setup__preview-name{font-family:var(--font-headline);font-size:1.15rem;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team-setup__preview-player{font-size:.85rem;color:var(--color-ink-2)}
+.team-setup__field input{height:3rem;border-radius:12px}
+.team-setup__counter{font-size:.75rem;color:var(--muted-2);text-align:right;margin-top:.35rem}
+.team-setup__toast{background:rgba(var(--color-success-rgb),.12);color:var(--color-success);padding:.6rem 1rem;border-radius:var(--r-row);font-size:.85rem;margin-bottom:1rem}
+.team-setup__invalid{padding:2rem;text-align:center;display:flex;flex-direction:column;gap:1rem;align-items:center}
+
+@media (max-width:1023px){.team-setup .card__foot{flex-direction:column;align-items:stretch}.team-setup .card__foot .btn{width:100%}}
 
 /* =========================================================
    PLAYERS CAROUSEL
