@@ -46,6 +46,12 @@ Check `docs/roadmap.md`, work on the first unchecked phase, tick items as you fi
 - **Admins** can enter or override any result directly. Every admin change writes to `audit_log`.
 - **Identity** is the WhatsApp number (digits only). Never expose phone numbers publicly
   (use the `public_players` view).
+- **Teams**: the player picks their team name at registration (required, ≤30 chars); the admin
+  owns the crest and two team colours. The team name locks once the tournament leaves
+  `registration` — except admins, who can always override it. Players who registered before team
+  names existed get a one-time, 7-day "complete your team" link from the admin Teams panel. No
+  crest yet → a generated SVG shield from the team's colours + initials, so nothing ever looks
+  broken.
 - Scores are reported sender first: `!r 3-1 @opp` means sender 3, opponent 1.
 
 ## Tech decisions
@@ -61,9 +67,9 @@ Check `docs/roadmap.md`, work on the first unchecked phase, tick items as you fi
 - Brand v2 (athletic-poster pivot): deep purple-black (`#1E0825`/`#27092F`), mustard yellow accent
   (`#DED002`) and violet accent (`#9938D4`), wine-magenta tag chips (`#830D5C`), Furore for
   display/headline type (the big oversized uppercase moments — hero title, section headlines,
-  format numerals, footer mega-wordmark), "Oscine, Helvetica Neue, Helvetica, Arial, sans-serif"
-  for everything else (body copy, buttons, nav, card/panel subheadings) — Oscine isn't a licensed
-  asset here, so this resolves to Helvetica Neue in practice; spring reveals, Lenis smooth scroll.
+  format numerals, footer mega-wordmark), Sofia Sans (Google Font, falling back to Helvetica Neue)
+  for everything else on the public site (body copy, buttons, nav, card/panel subheadings) — the
+  admin console is a separate design surface and keeps Onest; spring reveals, Lenis smooth scroll.
   A dedicated semantic green (`--color-success`) is kept separate from the brand yellow for
   "confirmed"/"open" status states — never reuse the yellow accent for status.
 - Header wordmark is "TOURNAX" (Furore) with "PESISM 2.0" as the small accent-yellow subtitle beneath it.

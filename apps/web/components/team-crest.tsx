@@ -32,9 +32,9 @@ export function TeamCrest({
   }
 
   return (
-    <div
+    <span
       className={className}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, display: 'inline-block' }}
       aria-hidden={teamName ? undefined : true}
       dangerouslySetInnerHTML={{ __html: crestSvg(label, primaryColor ?? null, secondaryColor ?? null) }}
     />

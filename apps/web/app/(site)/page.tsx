@@ -7,11 +7,19 @@ import { PlayersCarousel } from '@/components/players-carousel';
 import { QuoteDivider } from '@/components/quote-divider';
 import { StandingsSection } from '@/components/standings-section';
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ phase?: string; md?: string }>;
+}) {
+  const sp = await searchParams;
+  const phase = process.env.NODE_ENV !== 'production' ? sp.phase : undefined;
+  const md = sp.md ? Number(sp.md) : undefined;
+
   return (
     <>
       <Hero />
-      <MatchdaySection />
+      <MatchdaySection phase={phase} md={Number.isFinite(md) ? md : undefined} />
       <Format />
       <QuoteDivider text="The table is the only opinion that matters." />
       <StandingsSection />

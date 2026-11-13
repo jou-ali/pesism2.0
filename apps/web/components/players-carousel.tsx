@@ -4,6 +4,7 @@ import { fetchSeasonCompetition } from '@/lib/season-competition';
 import { avatarSvg } from '@/lib/avatar';
 import { SplitHeading } from './split-heading';
 import { UseIcon } from './icon';
+import { TeamCrest } from './team-crest';
 
 export async function PlayersCarousel() {
   const competition = await fetchSeasonCompetition();
@@ -76,6 +77,16 @@ export async function PlayersCarousel() {
                             <a href={`/players/${player.id}`}>{player.name}</a>
                           </h3>
                           <p className="player__tag">@{player.gamingUsername}</p>
+                          <p className="player__tag" style={{ display: 'flex', alignItems: 'center', gap: '.4rem', color: 'var(--muted-foreground)' }}>
+                            <TeamCrest
+                              teamName={player.teamName}
+                              crestUrl={player.crestUrl}
+                              primaryColor={player.primaryColor}
+                              secondaryColor={player.secondaryColor}
+                              size={18}
+                            />
+                            {player.teamName ?? 'Team pending'}
+                          </p>
                         </div>
                         <dl className="player__stats">
                           <div>

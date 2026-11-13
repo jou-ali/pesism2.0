@@ -1,6 +1,7 @@
-import type { SeasonCompetition } from '@/lib/season-competition';
+import type { SeasonCompetition, SeasonPlayer } from '@/lib/season-competition';
 import { isCountedMatch, matchdayChipsByNumber } from '@/lib/matchday-status';
 import { CompetitionComingSoon } from './competition-coming-soon';
+import { TeamCrest } from './team-crest';
 
 export function groupByMatchday(competition: SeasonCompetition) {
   const days = new Map<number, SeasonCompetition['matches']>();
@@ -31,6 +32,7 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
 
   const matchdays = groupByMatchday(competition!);
   const chips = matchdayChipsByNumber(matchdays);
+  const byId = new Map((competition!.players ?? []).map((p) => [p.id, p]));
 
   return (
     <div className="fixtures">
@@ -48,13 +50,13 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
                 return (
                   <li className="fixture-row" key={match.id}>
                     <span className="fixture-row__side fixture-row__side--home">
-                      <a href={`/players/${match.homeId}`}>{names[match.homeId] ?? match.homeId}</a>
+                      <FixtureName playerId={match.homeId} byId={byId} names={names} />
                     </span>
                     <span className="fixture-row__score">
                       {played ? `${match.homeGoals} – ${match.awayGoals}` : 'vs'}
                     </span>
                     <span className="fixture-row__side">
-                      <a href={`/players/${match.awayId}`}>{names[match.awayId] ?? match.awayId}</a>
+                      <FixtureName playerId={match.awayId} byId={byId} names={names} />
                     </span>
                   </li>
                 );
@@ -64,5 +66,31 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
         );
       })}
     </div>
+  );
+}
+
+function FixtureName({
+  playerId,
+  byId,
+  names,
+}: {
+  playerId: string;
+  byId: Map<string, SeasonPlayer>;
+  names: Record<string, string>;
+}) {
+  const player = byId.get(playerId);
+  return (
+    <a href={`/players/${playerId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
+      {player ? (
+        <TeamCrest
+          teamName={player.teamName}
+          crestUrl={player.crestUrl}
+          primaryColor={player.primaryColor}
+          secondaryColor={player.secondaryColor}
+          size={18}
+        />
+      ) : null}
+      {names[playerId] ?? playerId}
+    </a>
   );
 }

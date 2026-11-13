@@ -35,6 +35,7 @@
   --silver-1:#F2F5FA; --silver-2:#B9C3D4; --silver-3:#6E7889;
   --bronze-1:#F8C49A; --bronze-2:#D1844A; --bronze-3:#7A4320;
   --danger:#FF6B7A; --danger-soft:#FF9AA5;
+  --disputed:#E0689F; --disputed-rgb:224,104,159;
 
   /* the schedule section's light sub-palette, formalised as tokens */
   --paper-card:#FDFBFE; --paper-ink:#241029; --paper-ink-2:#5B4766; --paper-muted:#6B5775;
@@ -301,6 +302,70 @@ ul{list-style:none;margin:0;padding:0}
 .scorer__bar i{display:block;height:100%;border-radius:inherit;background:var(--grad-brand);transform-origin:left;transform:scaleX(0);transition:transform 1.4s var(--ease-out)}
 .scorers.is-in .scorer__bar i{transform:scaleX(var(--w))}
 .scorer:first-child .scorer__bar i{background:linear-gradient(90deg,var(--gold-2),var(--gold-1))}
+
+/* =========================================================
+   MATCH CARDS (matchday hub, knockout bracket)
+   ========================================================= */
+.match-cards{display:grid;grid-template-columns:1fr;gap:1.25rem}
+@media (min-width:700px){.match-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1100px){.match-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.match-card{position:relative;display:flex;flex-direction:column;border-radius:var(--r-xl);overflow:hidden;background:var(--navy);border:1px solid var(--line);text-decoration:none;color:inherit;transition:transform .25s var(--ease-out),border-color .25s var(--ease-out)}
+.match-card:hover{transform:translateY(-3px)}
+.match-card[data-status="pending_confirmation"]{border-color:rgba(var(--color-accent-rgb),.4)}
+.match-card[data-status="disputed"]{border-color:rgba(var(--disputed-rgb),.5)}
+.match-card::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(90deg,var(--home-tint,transparent) 0%,transparent 42%,transparent 58%,var(--away-tint,transparent) 100%)}
+
+.match-card__head{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.875rem 1.25rem;border-bottom:1px solid var(--line)}
+.match-card__label{font-size:.75rem;font-weight:800;letter-spacing:.16em;color:var(--muted-2);text-transform:uppercase}
+
+.match-card__chip{font-size:.75rem;font-weight:700;letter-spacing:.02em;padding:.3rem .75rem;border-radius:var(--r-pill);border:1px solid currentColor;white-space:nowrap}
+.match-card__chip--muted{color:var(--muted-2)}
+.match-card__chip--yellow{color:var(--green)}
+.match-card__chip--success{color:var(--color-success)}
+.match-card__chip--disputed{color:var(--disputed)}
+
+.match-card__body{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr);align-items:center;padding:1.5rem 1rem 1.375rem}
+.match-card__side{display:flex;flex-direction:column;align-items:center;gap:.625rem;text-align:center;min-width:0;transition:opacity .25s var(--ease-out)}
+.match-card__crest{border-radius:var(--r-md);flex:none}
+.match-card__team{font-family:var(--font-headline);font-size:.94rem;line-height:1.2;min-height:2.4em;max-width:100%;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.match-card__player{display:flex;align-items:center;gap:.5rem;max-width:100%;color:var(--color-ink-2);font-size:.82rem;min-width:0}
+.match-card__avatar{width:24px;height:24px;border-radius:50%;overflow:hidden;flex:none;display:inline-block;background:var(--navy-2)}
+.match-card__avatar svg,.match-card__avatar img{width:100%;height:100%;object-fit:cover}
+.match-card__player-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.match-card__center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;padding-bottom:2.9rem}
+.match-card__vs{width:46px;height:46px;border-radius:50%;background:var(--green);color:var(--color-accent-ink);display:flex;align-items:center;justify-content:center;font-family:var(--font-headline);font-size:1rem;flex:none}
+.match-card__score{font-family:var(--font-headline);font-size:2.1rem;line-height:1;white-space:nowrap}
+.match-card__score-dash{color:var(--muted-2)}
+
+.match-card__foot{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.875rem 1.25rem;border-top:1px solid var(--line);background:rgba(var(--color-paper-rgb),.35)}
+.match-card__foot-text{font-size:.82rem;color:var(--color-ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.match-card__foot-cta{flex:none;font-size:.82rem;font-weight:700;color:var(--green)}
+
+/* =========================================================
+   MATCHDAY HUB TABS
+   ========================================================= */
+.matchday-tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.25rem 0}
+.matchday-tabs a{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:var(--r-pill);border:1px solid var(--line-2);font-size:.82rem;font-weight:600;color:var(--muted-foreground);text-decoration:none;transition:border-color .2s var(--ease-out),color .2s var(--ease-out)}
+.matchday-tabs a[aria-current="page"]{border-color:var(--green);color:var(--green)}
+.matchday-tabs a:hover{border-color:var(--line)}
+
+/* =========================================================
+   BRACKET (knockout phase)
+   ========================================================= */
+.bracket{display:grid;grid-template-columns:1fr;gap:2rem}
+@media (min-width:900px){.bracket{grid-template-columns:repeat(var(--bracket-cols,2),minmax(0,1fr))}}
+.bracket__round h4{font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);margin:0 0 .9rem}
+.bracket__round .match-cards{grid-template-columns:1fr}
+
+/* =========================================================
+   REGISTRATION-PHASE PLAYER GRID
+   ========================================================= */
+.reg-players{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
+@media (min-width:700px){.reg-players{grid-template-columns:repeat(4,1fr)}}
+.reg-player{display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;padding:1rem;border-radius:var(--r-lg);background:var(--navy);border:1px solid var(--line-2)}
+.reg-player__name{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 
 /* =========================================================
    PLAYERS CAROUSEL

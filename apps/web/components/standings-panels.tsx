@@ -17,6 +17,12 @@ export function StandingsPanels({ competition, scorersLimit, showFootLink = fals
   const points = competition?.points;
   const matches = competition?.matches ?? [];
   const live = competition?.hasResults === true;
+  const playerCrests = Object.fromEntries(
+    (competition?.players ?? []).map((p) => [
+      p.id,
+      { teamName: p.teamName, crestUrl: p.crestUrl, primaryColor: p.primaryColor, secondaryColor: p.secondaryColor },
+    ]),
+  );
 
   const table = live ? computeStandings(playerIds, matches, points) : [];
   const scorers = live ? topScorers(playerIds, matches) : [];
@@ -30,7 +36,7 @@ export function StandingsPanels({ competition, scorersLimit, showFootLink = fals
           {live ? <span className="chip chip--live">Live</span> : <span className="chip">Coming soon</span>}
         </div>
         {live ? (
-          <LeagueTable rows={table} qualifiers={qualifiers} playerNames={playerNames} />
+          <LeagueTable rows={table} qualifiers={qualifiers} playerNames={playerNames} playerCrests={playerCrests} />
         ) : (
           <CompetitionComingSoon label="The table goes live once the first results are in." />
         )}
@@ -51,7 +57,7 @@ export function StandingsPanels({ competition, scorersLimit, showFootLink = fals
           {live ? <span className="chip chip--live">Live</span> : <span className="chip">Coming soon</span>}
         </div>
         {live ? (
-          <TopScorers scorers={scorersShown} playerNames={playerNames} />
+          <TopScorers scorers={scorersShown} playerNames={playerNames} playerCrests={playerCrests} />
         ) : (
           <CompetitionComingSoon label="No goals yet. The strikers are warming up." />
         )}
