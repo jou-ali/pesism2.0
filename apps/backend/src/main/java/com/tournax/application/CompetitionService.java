@@ -6,6 +6,7 @@ import com.tournax.application.dto.CompetitionResponse;
 import com.tournax.domain.model.FootballMatch;
 import com.tournax.domain.model.Tournament;
 import com.tournax.domain.repository.FootballMatchRepository;
+import com.tournax.domain.repository.MatchdayRepository;
 import com.tournax.domain.repository.TournamentPlayerRepository;
 import com.tournax.domain.repository.TournamentRepository;
 import java.util.List;
@@ -18,15 +19,18 @@ public class CompetitionService {
     private final TournamentRepository tournamentRepository;
     private final TournamentPlayerRepository tournamentPlayerRepository;
     private final FootballMatchRepository footballMatchRepository;
+    private final MatchdayRepository matchdayRepository;
 
     public CompetitionService(
         TournamentRepository tournamentRepository,
         TournamentPlayerRepository tournamentPlayerRepository,
-        FootballMatchRepository footballMatchRepository
+        FootballMatchRepository footballMatchRepository,
+        MatchdayRepository matchdayRepository
     ) {
         this.tournamentRepository = tournamentRepository;
         this.tournamentPlayerRepository = tournamentPlayerRepository;
         this.footballMatchRepository = footballMatchRepository;
+        this.matchdayRepository = matchdayRepository;
     }
 
     @Transactional(readOnly = true)
@@ -52,12 +56,17 @@ public class CompetitionService {
                 .map(this::toMatchDto)
                 .toList();
 
+        int totalMatchdays = (int) matchdayRepository.countByTournamentId(tournament.getId());
+
         return new CompetitionResponse(
             season,
             tournament.getKnockoutQualifiers(),
             tournament.getPointsWin(),
             tournament.getPointsDraw(),
             tournament.getPointsLoss(),
+            tournament.getStatus(),
+            tournament.getCurrentMatchday(),
+            totalMatchdays,
             players,
             matches
         );

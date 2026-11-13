@@ -1,4 +1,5 @@
 import type { Match, MatchStatus } from '@tournax/core';
+import type { TournamentStatusValue } from '@/lib/tournax-api';
 
 const API_BASE = process.env.TOURNAX_API_URL ?? 'http://localhost:8080';
 const CURRENT_SEASON = 3;
@@ -17,6 +18,9 @@ export type SeasonCompetition = {
   season: number;
   knockoutQualifiers: number;
   points: { win: number; draw: number; loss: number };
+  status: TournamentStatusValue;
+  currentMatchday: number | null;
+  totalMatchdays: number;
   players: SeasonPlayer[];
   matches: Match[];
   playerNames: Record<string, string>;
@@ -29,6 +33,9 @@ type ApiCompetition = {
   pointsWin: number;
   pointsDraw: number;
   pointsLoss: number;
+  status: TournamentStatusValue;
+  currentMatchday: number | null;
+  totalMatchdays: number;
   players: Array<{
     id: string;
     name: string;
@@ -74,6 +81,9 @@ export async function fetchSeasonCompetition(season = CURRENT_SEASON): Promise<S
       season: data.season,
       knockoutQualifiers: data.knockoutQualifiers,
       points: { win: data.pointsWin, draw: data.pointsDraw, loss: data.pointsLoss },
+      status: data.status,
+      currentMatchday: data.currentMatchday ?? null,
+      totalMatchdays: data.totalMatchdays,
       players: data.players.map((p) => ({
         id: p.id,
         name: p.name,

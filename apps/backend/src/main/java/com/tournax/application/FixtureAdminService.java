@@ -109,6 +109,7 @@ public class FixtureAdminService {
         requireApproved(tournament.getId(), body.awayPlayerId());
 
         Matchday matchday = ensureMatchday(tournament.getId(), body.matchday());
+        MatchStage stage = body.stageOrLeague();
 
         if (footballMatchRepository
             .findScheduledLeaguePairing(
@@ -116,7 +117,7 @@ public class FixtureAdminService {
                 body.matchday(),
                 body.homePlayerId(),
                 body.awayPlayerId(),
-                MatchStage.league,
+                stage,
                 MatchStatus.scheduled
             )
             .isPresent()) {
@@ -124,10 +125,11 @@ public class FixtureAdminService {
         }
 
         FootballMatch match =
-            FootballMatch.scheduledLeague(
+            FootballMatch.scheduled(
                 UUID.randomUUID(),
                 tournament.getId(),
                 matchday.getId(),
+                stage,
                 body.homePlayerId(),
                 body.awayPlayerId()
             );

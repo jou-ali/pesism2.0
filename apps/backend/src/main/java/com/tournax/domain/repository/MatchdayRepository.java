@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchdayRepository extends JpaRepository<Matchday, UUID> {
     Optional<Matchday> findByTournamentIdAndNumber(UUID tournamentId, int number);
+
+    long countByTournamentId(UUID tournamentId);
 }

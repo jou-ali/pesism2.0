@@ -82,11 +82,22 @@ public class FootballMatch {
         UUID homeId,
         UUID awayId
     ) {
+        return scheduled(id, tournamentId, matchdayId, MatchStage.league, homeId, awayId);
+    }
+
+    public static FootballMatch scheduled(
+        UUID id,
+        UUID tournamentId,
+        UUID matchdayId,
+        MatchStage stage,
+        UUID homeId,
+        UUID awayId
+    ) {
         FootballMatch match = new FootballMatch();
         match.id = id;
         match.tournamentId = tournamentId;
         match.matchdayId = matchdayId;
-        match.stage = MatchStage.league;
+        match.stage = stage;
         match.homeId = homeId;
         match.awayId = awayId;
         match.homeGoals = null;
@@ -104,6 +115,12 @@ public class FootballMatch {
         this.homeGoals = homeGoals;
         this.awayGoals = awayGoals;
         this.status = MatchStatus.resolved;
+        touchUpdatedAt(now);
+    }
+
+    /** Matchday closed with this match unplayed — pushes it into the admin's disputed queue. */
+    public void markDisputed(Instant now) {
+        this.status = MatchStatus.disputed;
         touchUpdatedAt(now);
     }
 

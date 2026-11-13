@@ -3,11 +3,14 @@
 import { revalidatePath } from 'next/cache';
 import {
   addGrievanceComment,
+  closeCurrentMatchday,
   closeRegistration,
   issueTeamSetupLink,
   openRegistration,
   recordAdminMatch,
   scheduleAdminFixture,
+  setTournamentStatus,
+  startMatchday,
   updateAdminMatch,
   updateGrievanceStatus,
   updatePlayerAvatar,
@@ -15,6 +18,7 @@ import {
   type GrievanceStatus,
   type RecordMatchBody,
   type ScheduleFixtureBody,
+  type TournamentStatusValue,
   type UpdateMatchBody,
   type UpdateTeamBody,
 } from '@/lib/tournax-api';
@@ -107,6 +111,28 @@ export async function uploadTeamCrestAction(playerId: string, formData: FormData
 
 export async function issueTeamSetupLinkAction(playerId: string) {
   return issueTeamSetupLink(playerId);
+}
+
+export async function setTournamentStatusAction(status: TournamentStatusValue) {
+  const result = await setTournamentStatus(status);
+  revalidatePath('/admin/season');
+  revalidatePath('/');
+  return result;
+}
+
+export async function startMatchdayAction(matchday: number, deadlineAt: string) {
+  const result = await startMatchday(matchday, deadlineAt);
+  revalidatePath('/admin/season');
+  revalidatePath('/');
+  return result;
+}
+
+export async function closeMatchdayAction() {
+  const result = await closeCurrentMatchday();
+  revalidatePath('/admin/season');
+  revalidatePath('/admin/fixtures');
+  revalidatePath('/');
+  return result;
 }
 
 export async function updateMatchAction(matchId: string, body: UpdateMatchBody) {

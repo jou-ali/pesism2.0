@@ -6,6 +6,13 @@ spring:
     url: ${DATABASE_URL}
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
+    hikari:
+      data-source-properties:
+        # Supabase's connection pooler (PgBouncer, transaction mode) doesn't support server-side
+        # prepared statements across pooled connections — this disables pgjdbc's prepared
+        # statement caching so Flyway/Hibernate don't intermittently hit "prepared statement
+        # already exists" / "does not exist" errors on connection handoff.
+        prepareThreshold: 0
   jpa:
     hibernate:
       # Flyway owns the schema — never use update/create here

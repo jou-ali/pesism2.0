@@ -26,6 +26,12 @@ public interface FootballMatchRepository extends JpaRepository<FootballMatch, UU
 
     long countByTournamentIdAndStage(UUID tournamentId, MatchStage stage);
 
+    List<FootballMatch> findByTournamentIdAndMatchdayIdAndStatusIn(
+        UUID tournamentId,
+        UUID matchdayId,
+        List<MatchStatus> statuses
+    );
+
     @Query(
         """
         select m from FootballMatch m

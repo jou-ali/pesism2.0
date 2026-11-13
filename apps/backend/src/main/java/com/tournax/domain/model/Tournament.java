@@ -50,6 +50,9 @@ public class Tournament {
     @Column(name = "points_loss", nullable = false)
     private int pointsLoss = 0;
 
+    @Column(name = "current_matchday")
+    private Integer currentMatchday;
+
     public Tournament() {}
 
     public UUID getId() {
@@ -80,8 +83,16 @@ public class Tournament {
         return registrationClosesAt;
     }
 
+    public Integer getCurrentMatchday() {
+        return currentMatchday;
+    }
+
     public void setStatus(TournamentStatus status) {
         this.status = status;
+    }
+
+    public void setCurrentMatchday(Integer currentMatchday) {
+        this.currentMatchday = currentMatchday;
     }
 
     public void setRegistrationOpensAt(Instant registrationOpensAt) {

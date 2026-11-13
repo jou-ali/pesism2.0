@@ -3,13 +3,21 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { scheduleFixtureAction } from '@/app/admin/actions';
-import type { AdminRegistration } from '@/lib/tournax-api';
+import type { AdminRegistration, MatchStage } from '@/lib/tournax-api';
+
+const STAGES: { value: MatchStage; label: string }[] = [
+  { value: 'league', label: 'League' },
+  { value: 'quarter_final', label: 'Quarter-final' },
+  { value: 'semi_final', label: 'Semi-final' },
+  { value: 'grand_final', label: 'Final' },
+];
 
 export function AdminScheduleMatchForm({ approved }: { approved: AdminRegistration[] }) {
   const router = useRouter();
   const [matchday, setMatchday] = useState('1');
   const [homeId, setHomeId] = useState('');
   const [awayId, setAwayId] = useState('');
+  const [stage, setStage] = useState<MatchStage>('league');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
@@ -32,6 +40,7 @@ export function AdminScheduleMatchForm({ approved }: { approved: AdminRegistrati
         matchday: Number(matchday),
         homePlayerId: homeId,
         awayPlayerId: awayId,
+        stage,
       });
       setSaved(`Scheduled: MD${row.matchday} ${row.homeName} vs ${row.awayName}`);
       router.refresh();
@@ -71,6 +80,16 @@ export function AdminScheduleMatchForm({ approved }: { approved: AdminRegistrati
             {approved.map((p) => (
               <option key={p.playerId} value={p.playerId}>
                 {p.name} ({p.gamingUsername})
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Stage
+          <select value={stage} onChange={(e) => setStage(e.target.value as MatchStage)}>
+            {STAGES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
               </option>
             ))}
           </select>

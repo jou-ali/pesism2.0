@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tournax.application.dto.CompleteTeamSetupRequest;
 import com.tournax.application.dto.TeamRow;
 import com.tournax.application.dto.TeamSetupStatusResponse;
@@ -60,7 +61,7 @@ class TeamServiceTest {
                 tournamentPlayerRepository,
                 teamSetupTokenRepository,
                 auditLogRepository,
-                new ObjectMapper(),
+                new ObjectMapper().registerModule(new JavaTimeModule()),
                 clock
             );
         tournamentId = UUID.fromString("a0000000-0000-4000-8000-000000000003");

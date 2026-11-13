@@ -178,10 +178,13 @@ export type GenerateFixturesResult = {
   matchesCreated: number;
 };
 
+export type MatchStage = 'league' | 'quarter_final' | 'semi_final' | 'third_place' | 'grand_final';
+
 export type ScheduleFixtureBody = {
   matchday: number;
   homePlayerId: string;
   awayPlayerId: string;
+  stage?: MatchStage;
 };
 
 export type FairPlayRow = {
@@ -386,5 +389,36 @@ export function completeTeamSetup(token: string, teamName: string) {
   return publicFetch<void>(`/api/v1/team-setup/${token}`, {
     method: 'POST',
     body: JSON.stringify({ teamName }),
+  });
+}
+
+export type TournamentStatusValue = 'draft' | 'registration' | 'league' | 'knockout' | 'finished';
+
+export function setTournamentStatus(status: TournamentStatusValue, season = CURRENT_SEASON) {
+  return adminFetch<TournamentStatusValue>(`/api/v1/admin/seasons/${season}/season-control/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
+}
+
+export type StartMatchdayResult = {
+  matchday: number;
+  opensAt: string;
+  deadlineAt: string;
+  missingCrestPlayerNames: string[];
+};
+
+export function startMatchday(matchday: number, deadlineAt: string, season = CURRENT_SEASON) {
+  return adminFetch<StartMatchdayResult>(`/api/v1/admin/seasons/${season}/season-control/matchdays/${matchday}/start`, {
+    method: 'POST',
+    body: JSON.stringify({ deadlineAt }),
+  });
+}
+
+export type CloseMatchdayResult = { matchday: number; disputedCount: number };
+
+export function closeCurrentMatchday(season = CURRENT_SEASON) {
+  return adminFetch<CloseMatchdayResult>(`/api/v1/admin/seasons/${season}/season-control/matchdays/current/close`, {
+    method: 'POST',
   });
 }
