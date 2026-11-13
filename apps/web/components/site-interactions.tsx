@@ -408,6 +408,7 @@ export function SiteInteractions() {
       phone: 'Enter a valid WhatsApp number with at least 10 digits.',
       city: 'Enter your city.',
       efootball: 'Enter your eFootball username.',
+      team: 'Enter your team name.',
       photo: 'Add a profile photo.',
     };
     function setError(field: HTMLElement, msg: string) {

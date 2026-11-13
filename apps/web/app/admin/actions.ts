@@ -4,18 +4,21 @@ import { revalidatePath } from 'next/cache';
 import {
   addGrievanceComment,
   closeRegistration,
+  issueTeamSetupLink,
   openRegistration,
   recordAdminMatch,
   scheduleAdminFixture,
   updateAdminMatch,
   updateGrievanceStatus,
   updatePlayerAvatar,
+  updateTeam,
   type GrievanceStatus,
   type RecordMatchBody,
   type ScheduleFixtureBody,
   type UpdateMatchBody,
+  type UpdateTeamBody,
 } from '@/lib/tournax-api';
-import { uploadPlayerAvatar } from '@/lib/supabase-server';
+import { uploadPlayerAvatar, uploadTeamCrest } from '@/lib/supabase-server';
 
 export async function closeRegistrationAction() {
   await closeRegistration();
@@ -73,6 +76,37 @@ export async function addGrievanceCommentAction(grievanceId: string, body: strin
   revalidatePath('/admin/grievances');
   revalidatePath(`/admin/grievances/${grievanceId}`);
   return detail;
+}
+
+export async function updateTeamAction(playerId: string, body: UpdateTeamBody) {
+  const row = await updateTeam(playerId, body);
+  revalidatePath('/admin/teams');
+  revalidatePath('/');
+  revalidatePath('/players');
+  return row;
+}
+
+export async function uploadTeamCrestAction(playerId: string, formData: FormData) {
+  const crest = formData.get('crest');
+  if (!(crest instanceof Blob) || crest.size === 0) {
+    throw new Error('Choose a crest image.');
+  }
+  const crestUrl = await uploadTeamCrest(crest);
+  const primaryColor = formData.get('primaryColor');
+  const secondaryColor = formData.get('secondaryColor');
+  const row = await updateTeam(playerId, {
+    crestUrl,
+    ...(typeof primaryColor === 'string' && primaryColor ? { primaryColor } : {}),
+    ...(typeof secondaryColor === 'string' && secondaryColor ? { secondaryColor } : {}),
+  });
+  revalidatePath('/admin/teams');
+  revalidatePath('/');
+  revalidatePath('/players');
+  return row;
+}
+
+export async function issueTeamSetupLinkAction(playerId: string) {
+  return issueTeamSetupLink(playerId);
 }
 
 export async function updateMatchAction(matchId: string, body: UpdateMatchBody) {

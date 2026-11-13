@@ -13,6 +13,7 @@ function readFields(form: FormData) {
     phone: String(form.get('phone') ?? '').trim(),
     city: String(form.get('city') ?? '').trim(),
     efootballUsername: String(form.get('efootball') ?? '').trim(),
+    teamName: String(form.get('team') ?? '').trim(),
     website: String(form.get('website') ?? ''),
   };
 }
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
       phone: body.phone?.trim(),
       city: body.city?.trim(),
       efootballUsername: body.efootball?.trim(),
+      teamName: body.team?.trim(),
       avatarUrl: body.avatarUrl?.trim(),
       website: body.website ?? '',
     };

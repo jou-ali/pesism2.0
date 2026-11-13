@@ -22,6 +22,8 @@ public class SecurityConfig {
                 auth ->
                     auth.requestMatchers("/api/v1/health")
                         .permitAll()
+                        .requestMatchers("/api/v1/team-setup/*")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/seasons/*/registration")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/seasons/*/registration")

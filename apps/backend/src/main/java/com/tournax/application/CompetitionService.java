@@ -39,7 +39,11 @@ public class CompetitionService {
                     tp.getPlayer().getName(),
                     tp.getPlayer().getGamingUsername(),
                     tp.getPlayer().getCity(),
-                    tp.getPlayer().getAvatarUrl()
+                    tp.getPlayer().getAvatarUrl(),
+                    tp.getTeamName(),
+                    tp.getCrestUrl(),
+                    tp.getPrimaryColor(),
+                    tp.getSecondaryColor()
                 ))
                 .toList();
 

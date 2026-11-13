@@ -174,7 +174,9 @@ public class RegistrationService {
         player.markEmailVerified(now);
         playerRepository.save(player);
 
-        tournamentPlayerRepository.save(TournamentPlayer.pending(tournament, player));
+        TournamentPlayer entry = TournamentPlayer.pending(tournament, player);
+        entry.setTeamName(request.teamName().trim());
+        tournamentPlayerRepository.save(entry);
 
         auditService.log(tournament.getId(), playerId, "email_verified", email, client, player.getCity(), null);
         auditService.log(tournament.getId(), playerId, "registration_completed", email, client, player.getCity(), null);

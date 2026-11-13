@@ -7,5 +7,9 @@ public record CompetitionPlayerDto(
     String name,
     String gamingUsername,
     String city,
-    String avatarUrl
+    String avatarUrl,
+    String teamName,
+    String crestUrl,
+    String primaryColor,
+    String secondaryColor
 ) {}

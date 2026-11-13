@@ -62,6 +62,12 @@ export async function RegisterModal() {
               <input id="f-efb" name="efootball" type="text" required placeholder="Your in game name" />
               <span className="field__error" aria-live="polite"></span>
             </div>
+            <div className="field">
+              <label htmlFor="f-team">Team name</label>
+              <input id="f-team" name="team" type="text" required maxLength={30} placeholder="Kochi Kings" />
+              <p className="field__hint">The club you&rsquo;ll play with all season.</p>
+              <span className="field__error" aria-live="polite"></span>
+            </div>
             <RegisterPhotoField />
             <input
               className="sr-only"

@@ -5,6 +5,7 @@ public record RegistrationIntentPayload(
     String gamingUsername,
     String efootballUsername,
     String city,
+    String teamName,
     String avatarUrl
 ) {
     public static RegistrationIntentPayload from(RegistrationRequest request) {
@@ -13,6 +14,7 @@ public record RegistrationIntentPayload(
             request.gamingUsername().trim(),
             request.efootballUsername() != null ? request.efootballUsername().trim() : null,
             request.city() != null ? request.city().trim() : null,
+            request.teamName().trim(),
             request.avatarUrl()
         );
     }
@@ -26,6 +28,7 @@ public record RegistrationIntentPayload(
             phone,
             city,
             efb,
+            teamName,
             avatarUrl,
             honeypot
         );

@@ -12,6 +12,7 @@ public record RegistrationRequest(
     @NotBlank @Pattern(regexp = "^[0-9+\\s()-]{10,20}$", message = "Enter a valid phone number") String phone,
     @NotBlank @Size(max = 120) String city,
     @NotBlank @Size(max = 120) String efootballUsername,
+    @NotBlank @Size(max = 30) String teamName,
     @Size(max = 2048) String avatarUrl,
     /** Hidden field for bots; must stay empty. JSON key matches frontend when wired. */
     String website

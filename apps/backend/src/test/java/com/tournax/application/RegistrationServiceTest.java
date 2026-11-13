@@ -95,6 +95,7 @@ class RegistrationServiceTest {
                 "+91 9876543210",
                 "Kochi",
                 "ArjunInGame",
+                "Arjun FC",
                 null,
                 null
             );
@@ -126,6 +127,7 @@ class RegistrationServiceTest {
                 "+91 9876543210",
                 "Kochi",
                 "ArjunInGame",
+                "Arjun FC",
                 null,
                 null
             );
@@ -147,6 +149,7 @@ class RegistrationServiceTest {
         setField(existing, "emailVerifiedAt", Instant.parse("2026-10-15T00:00:00Z"));
         when(playerRepository.findByWaNumber("919876543210")).thenReturn(Optional.of(existing));
         when(playerRepository.findByEmailIgnoreCase("a@b.com")).thenReturn(Optional.of(existing));
+        when(playerRepository.findById(playerId)).thenReturn(Optional.of(existing));
         when(tournamentPlayerRepository.existsByIdTournamentIdAndIdPlayerId(tournamentId, playerId)).thenReturn(true);
 
         RegistrationRequest req =
@@ -157,6 +160,7 @@ class RegistrationServiceTest {
                 "+91 9876543210",
                 "Kochi",
                 "ArjunInGame",
+                "Arjun FC",
                 null,
                 null
             );
