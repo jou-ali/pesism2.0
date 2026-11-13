@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { scheduleFixtureAction } from '@/app/admin/actions';
 import type { AdminRegistration, MatchStage } from '@/lib/tournax-api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const STAGES: { value: MatchStage; label: string }[] = [
   { value: 'league', label: 'League' },
@@ -52,56 +56,69 @@ export function AdminScheduleMatchForm({ approved }: { approved: AdminRegistrati
   }
 
   if (approved.length < 2) {
-    return <p className="admin-muted">Approve at least two players first.</p>;
+    return <p className="text-sm text-muted-foreground">Approve at least two players first.</p>;
   }
 
   return (
-    <form className="admin-form" onSubmit={onSubmit}>
-      <div className="admin-form__row">
-        <label>
-          Matchday
-          <input type="number" min={1} required value={matchday} onChange={(e) => setMatchday(e.target.value)} />
-        </label>
-        <label>
-          Home (player)
-          <select required value={homeId} onChange={(e) => setHomeId(e.target.value)}>
-            <option value="">Select…</option>
-            {approved.map((p) => (
-              <option key={p.playerId} value={p.playerId}>
-                {p.name} ({p.gamingUsername})
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Away (player)
-          <select required value={awayId} onChange={(e) => setAwayId(e.target.value)}>
-            <option value="">Select…</option>
-            {approved.map((p) => (
-              <option key={p.playerId} value={p.playerId}>
-                {p.name} ({p.gamingUsername})
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Stage
-          <select value={stage} onChange={(e) => setStage(e.target.value as MatchStage)}>
-            {STAGES.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
+    <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="sf-matchday">Matchday</Label>
+          <Input id="sf-matchday" type="number" inputMode="numeric" min={1} required value={matchday} onChange={(e) => setMatchday(e.target.value)} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="sf-home">Home (player)</Label>
+          <Select value={homeId} onValueChange={setHomeId}>
+            <SelectTrigger id="sf-home" className="w-full">
+              <SelectValue placeholder="Select…" />
+            </SelectTrigger>
+            <SelectContent>
+              {approved.map((p) => (
+                <SelectItem key={p.playerId} value={p.playerId}>
+                  {p.name} ({p.gamingUsername})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="sf-away">Away (player)</Label>
+          <Select value={awayId} onValueChange={setAwayId}>
+            <SelectTrigger id="sf-away" className="w-full">
+              <SelectValue placeholder="Select…" />
+            </SelectTrigger>
+            <SelectContent>
+              {approved.map((p) => (
+                <SelectItem key={p.playerId} value={p.playerId}>
+                  {p.name} ({p.gamingUsername})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="sf-stage">Stage</Label>
+          <Select value={stage} onValueChange={(v) => setStage(v as MatchStage)}>
+            <SelectTrigger id="sf-stage" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STAGES.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      {saved ? <p className="admin-muted" style={{ color: '#7dffb0' }}>{saved}</p> : null}
+      {saved ? <p className="text-sm" style={{ color: 'var(--color-success)' }}>{saved}</p> : null}
       {error ? <p className="admin-login-error">{error}</p> : null}
 
-      <button type="submit" className="admin-btn admin-btn--ghost" disabled={busy}>
+      <Button type="submit" variant="outline" disabled={busy} className="self-start">
         {busy ? 'Saving…' : 'Add one fixture'}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -17,7 +17,7 @@ function shouldPauseRefresh() {
       el.tagName === 'SELECT' ||
       el.tagName === 'BUTTON')
   ) {
-    const inAdminForm = el.closest('.admin-form, .admin-card--form');
+    const inAdminForm = el.closest('form');
     if (inAdminForm) return true;
   }
   return false;

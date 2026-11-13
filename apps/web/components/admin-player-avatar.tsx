@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { uploadPlayerAvatarAction } from '@/app/admin/actions';
+import { Button } from '@/components/ui/button';
 
 export function AdminPlayerAvatar({
   playerId,
@@ -36,20 +37,21 @@ export function AdminPlayerAvatar({
   }
 
   return (
-    <div className="admin-avatar-cell">
-      <button
+    <div className="flex flex-col items-start gap-1">
+      <Button
         type="button"
-        className="admin-avatar-btn"
+        variant="ghost"
+        className="size-10 overflow-hidden rounded-[10px] border border-(--line-card) bg-black/30 p-0"
         onClick={() => inputRef.current?.click()}
         disabled={busy}
         title={`Upload photo for ${name}`}
       >
         {avatarUrl ? (
-          <Image src={avatarUrl} alt="" width={40} height={40} className="admin-avatar-img" unoptimized />
+          <Image src={avatarUrl} alt="" width={40} height={40} className="size-10 object-cover" unoptimized />
         ) : (
-          <span className="admin-avatar-placeholder">{name.slice(0, 1).toUpperCase()}</span>
+          <span className="font-bold text-(--color-accent)">{name.slice(0, 1).toUpperCase()}</span>
         )}
-      </button>
+      </Button>
       <input
         ref={inputRef}
         type="file"
@@ -57,7 +59,7 @@ export function AdminPlayerAvatar({
         className="sr-only"
         onChange={(e) => onFile(e.target.files?.[0] ?? null)}
       />
-      {error ? <span className="admin-avatar-error">{error}</span> : null}
+      {error ? <span className="max-w-24 text-xs text-destructive">{error}</span> : null}
     </div>
   );
 }

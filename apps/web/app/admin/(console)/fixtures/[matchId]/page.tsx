@@ -1,8 +1,9 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminEditMatchForm } from '@/components/admin-edit-match-form';
+import { AdminPageHead } from '@/components/admin-page-head';
 import { getAdminMatch } from '@/lib/tournax-api';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,23 +23,19 @@ export default async function AdminEditMatchPage({ params }: { params: Promise<{
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">
-            <Link href="/admin/fixtures">Results</Link> / Edit
-          </p>
-          <h2>
-            {match ? `${match.homeName} ${match.homeGoals}–${match.awayGoals} ${match.awayName}` : 'Edit result'}
-          </h2>
-        </div>
-      </header>
+      <AdminPageHead
+        eyebrow="Results / Edit"
+        title={match ? `${match.homeName} ${match.homeGoals}–${match.awayGoals} ${match.awayName}` : 'Edit result'}
+      />
 
       {error || !match ? (
         <AdminApiStatus error={error ?? 'Match not found'} />
       ) : (
-        <div className="admin-card admin-card--form">
-          <AdminEditMatchForm match={match} />
-        </div>
+        <Card>
+          <CardContent>
+            <AdminEditMatchForm match={match} />
+          </CardContent>
+        </Card>
       )}
     </>
   );

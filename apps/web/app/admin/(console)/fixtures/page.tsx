@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminRecordMatchForm } from '@/components/admin-record-match-form';
-import { listAdminFixtures, listAdminMatches } from '@/lib/tournax-api';
+import { AdminPageHead } from '@/components/admin-page-head';
+import { ResponsiveList, type ResponsiveListColumn } from '@/components/admin-responsive-list';
+import { listAdminFixtures, listAdminMatches, type AdminMatchRow } from '@/lib/tournax-api';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,28 @@ function statusBadgeVariant(status: string): 'default' | 'secondary' | 'destruct
   if (status === 'confirmed' || status === 'resolved' || status === 'forfeit') return 'default';
   return 'secondary';
 }
+
+const COLUMNS: ResponsiveListColumn<AdminMatchRow>[] = [
+  { key: 'md', header: 'MD', cell: (m) => m.matchday },
+  { key: 'home', header: 'Home', cell: (m) => m.homeName },
+  {
+    key: 'score',
+    header: 'Score',
+    cell: (m) => <span className="tabular-nums">{m.homeGoals !== null && m.awayGoals !== null ? `${m.homeGoals}–${m.awayGoals}` : '—'}</span>,
+  },
+  { key: 'away', header: 'Away', cell: (m) => m.awayName },
+  { key: 'status', header: 'Status', cell: (m) => <Badge variant={statusBadgeVariant(m.status)}>{m.status}</Badge> },
+  { key: 'stats', header: 'Stats', cell: (m) => (m.hasStats ? 'Yes' : '—') },
+  {
+    key: 'actions',
+    header: '',
+    cell: (m) => (
+      <Link href={`/admin/fixtures/${m.id}`} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+        View / edit
+      </Link>
+    ),
+  },
+];
 
 export default async function AdminResultsPage({
   searchParams,
@@ -36,91 +59,70 @@ export default async function AdminResultsPage({
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">League results</p>
-          <h2>Record a match</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="League results" title="Record a match" />
 
       {error ? (
         <AdminApiStatus error={error} />
       ) : (
         <>
-          <div className="admin-card admin-card--form">
-            <p className="admin-muted">
-              Pick a fixture that already exists under <Link href="/admin/schedule" className="admin-link">Fixtures</Link>.
-              You cannot enter a score for a pairing that was not scheduled. Results count in the table immediately (admin
-              resolved).
-            </p>
-            <AdminRecordMatchForm scheduled={fixtures} />
-          </div>
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>New result</CardTitle>
+              <CardDescription>
+                Pick a fixture that already exists under <Link href="/admin/schedule" className="font-semibold text-(--color-accent)! hover:underline">Fixtures</Link>.
+                You cannot enter a score for a pairing that was not scheduled. Results count in the table immediately (admin
+                resolved).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <AdminRecordMatchForm scheduled={fixtures} />
+            </CardContent>
+          </Card>
 
-          <header className="admin-page-head" style={{ marginTop: '2rem' }}>
-            <div>
-              <p className="admin-eyebrow">Recorded</p>
-              <h2>Recent results</h2>
-            </div>
-            <div style={{ display: 'flex', gap: '.5rem' }}>
-              <Link href="/admin/fixtures" className="admin-link" aria-current={!statusFilter ? 'page' : undefined}>
-                All
-              </Link>
-              <Link
-                href="/admin/fixtures?status=disputed"
-                className="admin-link"
-                aria-current={statusFilter === 'disputed' ? 'page' : undefined}
-              >
-                Disputed only {disputedCount ? `(${disputedCount})` : ''}
-              </Link>
-            </div>
-          </header>
+          <AdminPageHead
+            eyebrow="Recorded"
+            title="Recent results"
+            action={
+              <div className="flex gap-3 text-sm font-semibold">
+                <Link href="/admin/fixtures" className="text-(--color-accent)! aria-[current=page]:underline" aria-current={!statusFilter ? 'page' : undefined}>
+                  All
+                </Link>
+                <Link
+                  href="/admin/fixtures?status=disputed"
+                  className="text-(--color-accent)! aria-[current=page]:underline"
+                  aria-current={statusFilter === 'disputed' ? 'page' : undefined}
+                >
+                  Disputed only {disputedCount ? `(${disputedCount})` : ''}
+                </Link>
+              </div>
+            }
+          />
 
-          {!visibleMatches.length ? (
-            <Card>
-              <CardContent>
-                <p className="admin-muted">{statusFilter === 'disputed' ? 'No disputed matches.' : 'No results yet.'}</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>MD</TableHead>
-                      <TableHead>Home</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead>Away</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Stats</TableHead>
-                      <TableHead aria-label="Actions" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {visibleMatches.map((m) => (
-                      <TableRow key={m.id}>
-                        <TableCell>{m.matchday}</TableCell>
-                        <TableCell>{m.homeName}</TableCell>
-                        <TableCell className="admin-mono">
-                          {m.homeGoals !== null && m.awayGoals !== null ? `${m.homeGoals}–${m.awayGoals}` : '—'}
-                        </TableCell>
-                        <TableCell>{m.awayName}</TableCell>
-                        <TableCell>
-                          <Badge variant={statusBadgeVariant(m.status)}>{m.status}</Badge>
-                        </TableCell>
-                        <TableCell>{m.hasStats ? 'Yes' : '—'}</TableCell>
-                        <TableCell>
-                          <Link href={`/admin/fixtures/${m.id}`} className="admin-link">
-                            View / edit
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          )}
+          <ResponsiveList
+            rows={visibleMatches}
+            rowKey={(m) => m.id}
+            columns={COLUMNS}
+            emptyMessage={statusFilter === 'disputed' ? 'No disputed matches.' : 'No results yet.'}
+            renderCard={(m) => (
+              <Card>
+                <CardHeader className="flex-row items-center justify-between gap-3">
+                  <span className="text-sm text-muted-foreground">MD{m.matchday}</span>
+                  <Badge variant={statusBadgeVariant(m.status)}>{m.status}</Badge>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-1 pt-3">
+                  <p className="font-semibold">
+                    {m.homeName} <span className="tabular-nums">{m.homeGoals !== null && m.awayGoals !== null ? `${m.homeGoals}–${m.awayGoals}` : 'vs'}</span> {m.awayName}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{m.hasStats ? 'Score sheet recorded' : 'No score sheet'}</p>
+                </CardContent>
+                <div className="flex items-center rounded-b-(--r-xl) border-t border-(--line-hairline) bg-(--color-paper)/35 p-(--card-spacing)">
+                  <Link href={`/admin/fixtures/${m.id}`} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+                    View / edit
+                  </Link>
+                </div>
+              </Card>
+            )}
+          />
         </>
       )}
     </>

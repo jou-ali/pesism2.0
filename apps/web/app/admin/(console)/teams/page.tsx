@@ -1,6 +1,7 @@
 import { listTeams } from '@/lib/tournax-api';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminTeamsPanel } from '@/components/admin-teams-panel';
+import { AdminPageHead } from '@/components/admin-page-head';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,12 +16,7 @@ export default async function AdminTeamsPage() {
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">Teams</p>
-          <h2>Crests &amp; colours</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="Teams" title="Crests & colours" />
 
       {error ? <AdminApiStatus error={error} /> : <AdminTeamsPanel rows={rows} />}
     </>

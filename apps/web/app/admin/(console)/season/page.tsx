@@ -1,6 +1,7 @@
 import { fetchSeasonCompetition } from '@/lib/season-competition';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminSeasonControl } from '@/components/admin-season-control';
+import { AdminPageHead } from '@/components/admin-page-head';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,12 +10,7 @@ export default async function AdminSeasonPage() {
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">Season control</p>
-          <h2>Phases &amp; matchdays</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="Season control" title="Phases & matchdays" />
 
       {!competition ? (
         <AdminApiStatus error="Could not load the season." />

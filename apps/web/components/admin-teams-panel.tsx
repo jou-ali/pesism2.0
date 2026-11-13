@@ -10,10 +10,10 @@ import { TeamCrest } from '@/components/team-crest';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-function TeamRowItem({ row }: { row: TeamRow }) {
+function useTeamRowState(row: TeamRow) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [teamName, setTeamName] = useState(row.teamName ?? '');
@@ -94,77 +94,151 @@ function TeamRowItem({ row }: { row: TeamRow }) {
     }
   }
 
+  return {
+    fileRef,
+    teamName,
+    setTeamName,
+    primaryColor,
+    setPrimaryColor,
+    secondaryColor,
+    setSecondaryColor,
+    busy,
+    error,
+    linkCopied,
+    saveTeamName,
+    onCrestFile,
+    saveColors,
+    copySetupLink,
+  };
+}
+
+function CrestButton({ row, state, size }: { row: TeamRow; state: ReturnType<typeof useTeamRowState>; size: number }) {
+  return (
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        className="size-auto rounded-full p-0"
+        onClick={() => state.fileRef.current?.click()}
+        disabled={state.busy}
+        title={`Upload crest for ${row.playerName}`}
+      >
+        <TeamCrest
+          teamName={row.teamName}
+          crestUrl={row.crestUrl}
+          primaryColor={state.primaryColor}
+          secondaryColor={state.secondaryColor}
+          size={size}
+        />
+      </Button>
+      <input
+        ref={state.fileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        onChange={(e) => state.onCrestFile(e.target.files?.[0] ?? null)}
+      />
+    </>
+  );
+}
+
+function ColorSwatches({ state }: { state: ReturnType<typeof useTeamRowState> }) {
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        type="color"
+        value={state.primaryColor}
+        onChange={(e) => state.setPrimaryColor(e.target.value)}
+        onBlur={state.saveColors}
+        disabled={state.busy}
+        aria-label="Primary colour"
+        className="size-8 cursor-pointer rounded-[8px] border border-(--line-card) bg-transparent p-0.5"
+      />
+      <input
+        type="color"
+        value={state.secondaryColor}
+        onChange={(e) => state.setSecondaryColor(e.target.value)}
+        onBlur={state.saveColors}
+        disabled={state.busy}
+        aria-label="Secondary colour"
+        className="size-8 cursor-pointer rounded-[8px] border border-(--line-card) bg-transparent p-0.5"
+      />
+    </div>
+  );
+}
+
+function NameField({ row, state }: { row: TeamRow; state: ReturnType<typeof useTeamRowState> }) {
+  return (
+    <div className="flex gap-2">
+      <Input
+        value={state.teamName}
+        onChange={(e) => state.setTeamName(e.target.value)}
+        maxLength={30}
+        placeholder="Team pending"
+        disabled={state.busy}
+      />
+      <Button
+        type="button"
+        size="sm"
+        onClick={state.saveTeamName}
+        disabled={state.busy || state.teamName.trim() === (row.teamName ?? '')}
+      >
+        Save
+      </Button>
+    </div>
+  );
+}
+
+function TeamDesktopRow({ row }: { row: TeamRow }) {
+  const state = useTeamRowState(row);
   return (
     <TableRow>
       <TableCell>
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          disabled={busy}
-          title={`Upload crest for ${row.playerName}`}
-          style={{ background: 'none', border: 0, padding: 0, cursor: 'pointer' }}
-        >
-          <TeamCrest
-            teamName={row.teamName}
-            crestUrl={row.crestUrl}
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            size={40}
-          />
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="sr-only"
-          onChange={(e) => onCrestFile(e.target.files?.[0] ?? null)}
-        />
+        <CrestButton row={row} state={state} size={40} />
       </TableCell>
       <TableCell>{row.playerName}</TableCell>
       <TableCell>
-        <div style={{ display: 'flex', gap: '.5rem' }}>
-          <Input
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            maxLength={30}
-            placeholder="Team pending"
-            disabled={busy}
-          />
-          <Button type="button" size="sm" onClick={saveTeamName} disabled={busy || teamName.trim() === (row.teamName ?? '')}>
-            Save
-          </Button>
-        </div>
+        <NameField row={row} state={state} />
       </TableCell>
       <TableCell>
-        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-          <input
-            type="color"
-            value={primaryColor}
-            onChange={(e) => setPrimaryColor(e.target.value)}
-            onBlur={saveColors}
-            disabled={busy}
-            aria-label="Primary colour"
-          />
-          <input
-            type="color"
-            value={secondaryColor}
-            onChange={(e) => setSecondaryColor(e.target.value)}
-            onBlur={saveColors}
-            disabled={busy}
-            aria-label="Secondary colour"
-          />
-        </div>
+        <ColorSwatches state={state} />
       </TableCell>
       <TableCell>
         <Badge variant={row.hasCrest ? 'default' : 'secondary'}>{row.hasCrest ? 'Crest added' : 'Missing'}</Badge>
       </TableCell>
       <TableCell>
-        <Button type="button" size="sm" variant="outline" onClick={copySetupLink} disabled={busy}>
-          {linkCopied ? 'Copied!' : 'Copy setup link'}
+        <Button type="button" size="sm" variant="outline" onClick={state.copySetupLink} disabled={state.busy}>
+          {state.linkCopied ? 'Copied!' : 'Copy setup link'}
         </Button>
-        {error ? <p style={{ color: 'var(--destructive)', fontSize: '.8rem', marginTop: '.35rem' }}>{error}</p> : null}
+        {state.error ? <p className="mt-1 text-xs text-destructive">{state.error}</p> : null}
       </TableCell>
     </TableRow>
+  );
+}
+
+function TeamCard({ row }: { row: TeamRow }) {
+  const state = useTeamRowState(row);
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center gap-3">
+        <CrestButton row={row} state={state} size={40} />
+        <div className="flex-1">
+          <p className="font-semibold">{row.playerName}</p>
+          <p className="text-sm text-muted-foreground">{row.teamName ?? 'Team pending'}</p>
+        </div>
+        <Badge variant={row.hasCrest ? 'default' : 'secondary'}>{row.hasCrest ? 'Crest added' : 'Missing'}</Badge>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3 pt-3">
+        <NameField row={row} state={state} />
+        <ColorSwatches state={state} />
+        {state.error ? <p className="text-xs text-destructive">{state.error}</p> : null}
+      </CardContent>
+      <CardFooter>
+        <Button type="button" size="sm" variant="outline" onClick={state.copySetupLink} disabled={state.busy}>
+          {state.linkCopied ? 'Copied!' : 'Copy setup link'}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
 
@@ -173,33 +247,40 @@ export function AdminTeamsPanel({ rows }: { rows: TeamRow[] }) {
     return (
       <Card>
         <CardContent>
-          <p className="admin-muted">No approved players yet.</p>
+          <p className="text-sm text-muted-foreground">No approved players yet.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Crest</TableHead>
-              <TableHead>Player</TableHead>
-              <TableHead>Team name</TableHead>
-              <TableHead>Colours</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Setup link</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TeamRowItem key={row.playerId} row={row} />
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+    <>
+      <Card className="hidden md:block">
+        <CardContent className="overflow-x-auto p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Crest</TableHead>
+                <TableHead>Player</TableHead>
+                <TableHead>Team name</TableHead>
+                <TableHead>Colours</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Setup link</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row) => (
+                <TeamDesktopRow key={row.playerId} row={row} />
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <div className="flex flex-col gap-3 md:hidden">
+        {rows.map((row) => (
+          <TeamCard key={row.playerId} row={row} />
+        ))}
+      </div>
+    </>
   );
 }

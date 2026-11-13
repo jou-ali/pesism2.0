@@ -1,12 +1,15 @@
 import Link from 'next/link';
 import { AdminApiStatus } from '@/components/admin-api-status';
+import { AdminPageHead } from '@/components/admin-page-head';
+import { ResponsiveList, type ResponsiveListColumn } from '@/components/admin-responsive-list';
 import { listAdminGrievances, type GrievanceStatus } from '@/lib/tournax-api';
 import { Badge, type badgeVariants } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import type { VariantProps } from 'class-variance-authority';
 
 export const dynamic = 'force-dynamic';
+
+type GrievanceRow = Awaited<ReturnType<typeof listAdminGrievances>>[number];
 
 const STATUS_LABEL: Record<GrievanceStatus, string> = {
   open: 'Open',
@@ -22,8 +25,26 @@ const STATUS_VARIANT: Record<GrievanceStatus, NonNullable<VariantProps<typeof ba
   rejected: 'destructive',
 };
 
+const COLUMNS: ResponsiveListColumn<GrievanceRow>[] = [
+  { key: 'when', header: 'When', cell: (g) => <span className="tabular-nums">{new Date(g.createdAt).toLocaleDateString('en-IN')}</span> },
+  { key: 'player', header: 'Player', cell: (g) => g.playerName },
+  { key: 'category', header: 'Category', cell: (g) => g.category },
+  { key: 'subject', header: 'Subject', cell: (g) => g.subject },
+  { key: 'status', header: 'Status', cell: (g) => <Badge variant={STATUS_VARIANT[g.status]}>{STATUS_LABEL[g.status]}</Badge> },
+  { key: 'notes', header: 'Notes', cell: (g) => g.commentCount },
+  {
+    key: 'actions',
+    header: '',
+    cell: (g) => (
+      <Link href={`/admin/grievances/${g.id}`} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+        Review
+      </Link>
+    ),
+  },
+];
+
 export default async function AdminGrievancesPage() {
-  let rows: Awaited<ReturnType<typeof listAdminGrievances>> = [];
+  let rows: GrievanceRow[] = [];
   let error: string | null = null;
   try {
     rows = await listAdminGrievances();
@@ -33,58 +54,34 @@ export default async function AdminGrievancesPage() {
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">Member issues</p>
-          <h2>Grievances</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="Member issues" title="Grievances" />
 
       {error ? (
         <AdminApiStatus error={error} />
-      ) : !rows.length ? (
-        <Card>
-          <CardContent>
-            <p className="admin-muted">No grievances yet. Players file from the public Grievances page.</p>
-          </CardContent>
-        </Card>
       ) : (
-        <Card>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>When</TableHead>
-                  <TableHead>Player</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Notes</TableHead>
-                  <TableHead aria-label="Actions" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((g) => (
-                  <TableRow key={g.id}>
-                    <TableCell className="admin-mono">{new Date(g.createdAt).toLocaleDateString('en-IN')}</TableCell>
-                    <TableCell>{g.playerName}</TableCell>
-                    <TableCell>{g.category}</TableCell>
-                    <TableCell>{g.subject}</TableCell>
-                    <TableCell>
-                      <Badge variant={STATUS_VARIANT[g.status]}>{STATUS_LABEL[g.status]}</Badge>
-                    </TableCell>
-                    <TableCell>{g.commentCount}</TableCell>
-                    <TableCell>
-                      <Link href={`/admin/grievances/${g.id}`} className="admin-link">
-                        Review
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <ResponsiveList
+          rows={rows}
+          rowKey={(g) => g.id}
+          columns={COLUMNS}
+          emptyMessage="No grievances yet. Players file from the public Grievances page."
+          renderCard={(g) => (
+            <Card>
+              <CardHeader className="flex-row items-center justify-between gap-3">
+                <span className="text-sm text-muted-foreground tabular-nums">{new Date(g.createdAt).toLocaleDateString('en-IN')}</span>
+                <Badge variant={STATUS_VARIANT[g.status]}>{STATUS_LABEL[g.status]}</Badge>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-1 pt-3">
+                <p className="font-semibold">{g.subject}</p>
+                <p className="text-sm text-muted-foreground">{g.playerName} · {g.category} · {g.commentCount} note{g.commentCount === 1 ? '' : 's'}</p>
+              </CardContent>
+              <div className="flex items-center rounded-b-(--r-xl) border-t border-(--line-hairline) bg-(--color-paper)/35 p-(--card-spacing)">
+                <Link href={`/admin/grievances/${g.id}`} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+                  Review
+                </Link>
+              </div>
+            </Card>
+          )}
+        />
       )}
     </>
   );

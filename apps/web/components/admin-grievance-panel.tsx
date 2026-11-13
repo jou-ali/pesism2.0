@@ -62,43 +62,39 @@ export function AdminGrievancePanel({ grievance }: { grievance: GrievanceDetail 
   }
 
   return (
-    <div className="admin-grievance">
+    <div className="flex flex-col gap-5">
       <Card>
         <CardContent>
-          <p className="admin-muted">
-            <strong>{grievance.playerName}</strong> · {grievance.playerEmail} · {grievance.playerWaNumber}
+          <p className="text-sm text-muted-foreground">
+            <strong className="text-foreground">{grievance.playerName}</strong> · {grievance.playerEmail} · {grievance.playerWaNumber}
           </p>
-          <p className="admin-muted" style={{ marginTop: '0.5rem' }}>
+          <p className="mt-2 text-sm text-muted-foreground">
             Filed {formatWhen(grievance.createdAt)} · Category: {grievance.category}
           </p>
-          <h3 className="admin-standings-title" style={{ marginTop: '1.25rem' }}>
-            {grievance.subject}
-          </h3>
-          <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{grievance.message}</p>
+          <h3 className="mt-5 font-heading! text-lg uppercase tracking-(--tracking-headline)">{grievance.subject}</h3>
+          <p className="leading-relaxed whitespace-pre-wrap">{grievance.message}</p>
         </CardContent>
       </Card>
 
-      <Card style={{ marginTop: '1.25rem' }}>
+      <Card>
         <CardHeader>
           <CardTitle>Status</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="admin-form__row">
-            <Label>
-              Committee decision
-              <Select value={status} onValueChange={(v) => setStatus(v as GrievanceStatus)} disabled={busy}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Label>
+        <CardContent className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-end">
+          <div className="flex flex-1 flex-col gap-1.5">
+            <Label htmlFor="grievance-status">Committee decision</Label>
+            <Select value={status} onValueChange={(v) => setStatus(v as GrievanceStatus)} disabled={busy}>
+              <SelectTrigger id="grievance-status" className="w-full sm:max-w-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <Button type="button" disabled={busy || status === grievance.status} onClick={saveStatus}>
             Update status
@@ -106,27 +102,27 @@ export function AdminGrievancePanel({ grievance }: { grievance: GrievanceDetail 
         </CardContent>
       </Card>
 
-      <Card style={{ marginTop: '1.25rem' }}>
+      <Card>
         <CardHeader>
           <CardTitle>Admin comments</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           {grievance.comments.length ? (
-            <ul className="admin-grievance__thread">
+            <ul className="flex flex-col gap-3">
               {grievance.comments.map((c) => (
-                <li key={c.id}>
-                  <time className="admin-muted" dateTime={c.createdAt}>
+                <li key={c.id} className="rounded-[10px] border border-(--line-card) bg-black/20 p-3">
+                  <time className="text-xs text-muted-foreground" dateTime={c.createdAt}>
                     {formatWhen(c.createdAt)}
                   </time>
-                  <p>{c.body}</p>
+                  <p className="mt-1 leading-relaxed whitespace-pre-wrap">{c.body}</p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="admin-muted">No committee notes yet.</p>
+            <p className="text-sm text-muted-foreground">No committee notes yet.</p>
           )}
 
-          <form onSubmit={postComment} style={{ marginTop: '1rem', display: 'grid', gap: '0.6rem' }}>
+          <form onSubmit={postComment} className="mt-4 grid gap-2.5">
             <Label htmlFor="grievance-comment">Add comment (visible to admins only for now)</Label>
             <Textarea
               id="grievance-comment"

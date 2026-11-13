@@ -157,6 +157,18 @@ ul{list-style:none;margin:0;padding:0}
 .pill--live{color:var(--color-success)}
 .pill--live::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
 
+/* .card--accent — the one highlighted stat in a group (Overview KPI grid). Plain,
+   unlayered rule so it beats Tailwind's layered bg-card/text-card-foreground utilities
+   on the shadcn Card without needing !important. */
+.card--accent{background:var(--color-accent);border-color:var(--color-accent)}
+.card--accent,.card--accent *{color:var(--color-accent-ink)}
+
+/* Shared admin primitive sizing — kept here (not per-component) so Input/Select/Textarea
+   hit a 44px tap target on phone without a second set of mobile-only component variants. */
+@media (max-width:640px){
+  [data-slot="input"],[data-slot="select-trigger"],[data-slot="textarea"]{min-height:44px}
+}
+
 /* Section */
 .section{position:relative;padding-block:var(--section)}
 .section__head{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:clamp(2.5rem,5vw,4.5rem)}

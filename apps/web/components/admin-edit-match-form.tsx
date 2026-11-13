@@ -6,6 +6,9 @@ import { useState } from 'react';
 import { updateMatchAction } from '@/app/admin/actions';
 import type { AdminMatchDetail, MatchStatsInput } from '@/lib/tournax-api';
 import { MatchStatsFields } from '@/components/match-stats-fields';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 function statMapFromDetail(stats: MatchStatsInput | null | undefined): MatchStatsInput {
   return stats ? { ...stats } : {};
@@ -54,55 +57,59 @@ export function AdminEditMatchForm({ match }: { match: AdminMatchDetail }) {
   }
 
   return (
-    <form className="admin-form" onSubmit={onSubmit}>
-      <p className="admin-muted">
+    <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+      <p className="text-sm text-muted-foreground">
         MD{match.matchday} · {match.homeName} vs {match.awayName}
       </p>
 
-      <div className="admin-form__row">
-        <label>
-          {match.homeName} goals
-          <input
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="em-home">{match.homeName} goals</Label>
+          <Input
+            id="em-home"
             type="number"
+            inputMode="numeric"
             min={0}
             required
             value={homeGoals}
             onChange={(e) => setHomeGoals(e.target.value)}
           />
-        </label>
-        <label>
-          {match.awayName} goals
-          <input
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="em-away">{match.awayName} goals</Label>
+          <Input
+            id="em-away"
             type="number"
+            inputMode="numeric"
             min={0}
             required
             value={awayGoals}
             onChange={(e) => setAwayGoals(e.target.value)}
           />
-        </label>
+        </div>
       </div>
 
-      <label className="admin-check">
-        <input type="checkbox" checked={includeStats} onChange={(e) => setIncludeStats(e.target.checked)} />
+      <label className="flex min-h-11 items-center gap-2 text-sm">
+        <input type="checkbox" checked={includeStats} onChange={(e) => setIncludeStats(e.target.checked)} className="size-4" />
         Include / edit score sheet stats
       </label>
 
       {includeStats ? (
         <MatchStatsFields stats={stats} onChange={setStat} homeLabel={match.homeName} awayLabel={match.awayName} />
       ) : (
-        <p className="admin-muted">Unchecking removes stored stats for this match.</p>
+        <p className="text-sm text-muted-foreground">Unchecking removes stored stats for this match.</p>
       )}
 
-      {saved ? <p className="admin-muted" style={{ color: '#7dffb0' }}>Saved.</p> : null}
+      {saved ? <p className="text-sm" style={{ color: 'var(--color-success)' }}>Saved.</p> : null}
       {error ? <p className="admin-login-error">{error}</p> : null}
 
-      <div className="admin-registration-actions">
-        <button type="submit" className="admin-btn" disabled={busy}>
+      <div className="flex flex-wrap gap-2">
+        <Button type="submit" disabled={busy}>
           {busy ? 'Saving…' : 'Save changes'}
-        </button>
-        <Link href="/admin/fixtures" className="admin-btn admin-btn--ghost">
-          Back to results
-        </Link>
+        </Button>
+        <Button asChild type="button" variant="ghost">
+          <Link href="/admin/fixtures">Back to results</Link>
+        </Button>
       </div>
     </form>
   );

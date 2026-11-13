@@ -1,6 +1,7 @@
 import { getAdminDashboard } from '@/lib/tournax-api';
 import { AdminRegistrationActions } from '@/components/admin-registration-actions';
 import { AdminApiStatus } from '@/components/admin-api-status';
+import { AdminPageHead } from '@/components/admin-page-head';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
@@ -25,37 +26,35 @@ export default async function AdminOverviewPage() {
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">Season {dashboard.season}</p>
-          <h2>{dashboard.name}</h2>
-        </div>
-        <AdminRegistrationActions registrationOpen={dashboard.registrationOpen} />
-      </header>
+      <AdminPageHead
+        eyebrow={`Season ${dashboard.season}`}
+        title={dashboard.name}
+        action={<AdminRegistrationActions registrationOpen={dashboard.registrationOpen} />}
+      />
 
-      <div className="admin-stat-grid">
-        <Card className="admin-stat">
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <Card className="card--accent">
           <CardContent>
-            <span className="admin-muted">Registered</span>
-            <strong>{dashboard.totalRegistrations}</strong>
+            <span className="text-sm font-semibold opacity-80">Registered</span>
+            <strong className="mt-1 block text-3xl tabular-nums">{dashboard.totalRegistrations}</strong>
           </CardContent>
         </Card>
-        <Card className="admin-stat">
+        <Card>
           <CardContent>
-            <span className="admin-muted">Approved</span>
-            <strong>{dashboard.approvedCount}</strong>
+            <span className="text-sm text-muted-foreground">Approved</span>
+            <strong className="mt-1 block text-3xl tabular-nums">{dashboard.approvedCount}</strong>
           </CardContent>
         </Card>
-        <Card className="admin-stat">
+        <Card>
           <CardContent>
-            <span className="admin-muted">Pending</span>
-            <strong>{dashboard.pendingCount}</strong>
+            <span className="text-sm text-muted-foreground">Pending</span>
+            <strong className="mt-1 block text-3xl tabular-nums">{dashboard.pendingCount}</strong>
           </CardContent>
         </Card>
-        <Card className="admin-stat">
+        <Card>
           <CardContent>
-            <span className="admin-muted">Slots</span>
-            <strong>
+            <span className="text-sm text-muted-foreground">Slots</span>
+            <strong className="mt-1 block text-3xl tabular-nums">
               {dashboard.maxPlayers != null
                 ? `${dashboard.totalRegistrations} / ${dashboard.maxPlayers}`
                 : dashboard.totalRegistrations}
@@ -68,19 +67,19 @@ export default async function AdminOverviewPage() {
         <CardHeader>
           <CardTitle>Registration window</CardTitle>
         </CardHeader>
-        <CardContent>
-          <dl className="admin-dl">
-            <dt>Status</dt>
-            <dd>{dashboard.registrationOpen ? 'Open' : 'Closed'}</dd>
-            <dt>Phase</dt>
-            <dd>{dashboard.status}</dd>
-            <dt>Opens</dt>
-            <dd>{formatInstant(dashboard.registrationOpensAt)}</dd>
-            <dt>Closes</dt>
-            <dd>{formatInstant(dashboard.registrationClosesAt)}</dd>
+        <CardContent className="pt-4">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
+            <dt className="text-sm text-muted-foreground">Status</dt>
+            <dd className="font-semibold">{dashboard.registrationOpen ? 'Open' : 'Closed'}</dd>
+            <dt className="text-sm text-muted-foreground">Phase</dt>
+            <dd className="font-semibold">{dashboard.status}</dd>
+            <dt className="text-sm text-muted-foreground">Opens</dt>
+            <dd className="font-semibold">{formatInstant(dashboard.registrationOpensAt)}</dd>
+            <dt className="text-sm text-muted-foreground">Closes</dt>
+            <dd className="font-semibold">{formatInstant(dashboard.registrationClosesAt)}</dd>
           </dl>
           {!dashboard.registrationOpen ? (
-            <p className="admin-muted" style={{ marginTop: '0.75rem' }}>
+            <p className="mt-3 text-sm text-muted-foreground">
               Closing registration switches the tournament to the <strong>league</strong> phase. Use{' '}
               <strong>Reopen registration</strong> above to accept new sign-ups again (extends the window by 30 days).
             </p>

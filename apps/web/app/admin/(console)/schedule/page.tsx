@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminScheduleMatchForm } from '@/components/admin-schedule-match-form';
-import { listAdminFixtures, listRegistrations } from '@/lib/tournax-api';
+import { AdminPageHead } from '@/components/admin-page-head';
+import { ResponsiveList, type ResponsiveListColumn } from '@/components/admin-responsive-list';
+import { listAdminFixtures, listRegistrations, type AdminMatchRow } from '@/lib/tournax-api';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,23 @@ function formatScore(home: number | null, away: number | null, status: string) {
   }
   return 'vs';
 }
+
+const COLUMNS: ResponsiveListColumn<AdminMatchRow>[] = [
+  { key: 'md', header: 'MD', cell: (f) => f.matchday },
+  { key: 'home', header: 'Home', cell: (f) => f.homeName },
+  { key: 'score', header: 'Score', cell: (f) => <span className="tabular-nums">{formatScore(f.homeGoals, f.awayGoals, f.status)}</span> },
+  { key: 'away', header: 'Away', cell: (f) => f.awayName },
+  { key: 'status', header: 'Status', cell: (f) => <Badge variant={f.status === 'scheduled' ? 'secondary' : 'default'}>{f.status}</Badge> },
+  {
+    key: 'actions',
+    header: '',
+    cell: (f) => (
+      <Link href={f.status !== 'scheduled' ? `/admin/fixtures/${f.id}` : '/admin/fixtures'} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+        {f.status !== 'scheduled' ? 'Edit' : 'Enter result'}
+      </Link>
+    ),
+  },
+];
 
 export default async function AdminSchedulePage() {
   let error: string | null = null;
@@ -32,88 +50,61 @@ export default async function AdminSchedulePage() {
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">League stage</p>
-          <h2>Fixtures</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="League stage" title="Fixtures" />
 
       {error ? (
         <AdminApiStatus error={error} />
       ) : (
         <>
-          <div className="admin-card admin-card--form">
-            <h3 className="admin-standings-title" style={{ marginTop: 0 }}>
-              Add a fixture
-            </h3>
-            <p className="admin-muted">Pick matchday, home, and away. Published rows show on the public fixtures page.</p>
-            <AdminScheduleMatchForm approved={approved} />
-          </div>
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Add a fixture</CardTitle>
+              <CardDescription>Pick matchday, home, and away. Published rows show on the public fixtures page.</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <AdminScheduleMatchForm approved={approved} />
+            </CardContent>
+          </Card>
 
-          <header className="admin-page-head" style={{ marginTop: '2rem' }}>
-            <div>
-              <p className="admin-eyebrow">Published</p>
-              <h2>League schedule</h2>
-            </div>
-            <Link href="/fixtures" className="admin-link" target="_blank" rel="noopener noreferrer">
-              View public page
-            </Link>
-          </header>
+          <AdminPageHead
+            eyebrow="Published"
+            title="League schedule"
+            action={
+              <Link href="/fixtures" className="text-sm font-semibold text-(--color-accent)! hover:underline" target="_blank" rel="noopener noreferrer">
+                View public page
+              </Link>
+            }
+          />
 
-          {!fixtures.length ? (
-            <Card>
-              <CardContent>
-                <p className="admin-muted">No league fixtures yet. Add one above, then record scores under Results.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>MD</TableHead>
-                      <TableHead>Home</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead>Away</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead aria-label="Actions" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fixtures.map((f) => (
-                      <TableRow key={f.id}>
-                        <TableCell>{f.matchday}</TableCell>
-                        <TableCell>{f.homeName}</TableCell>
-                        <TableCell className="admin-mono">{formatScore(f.homeGoals, f.awayGoals, f.status)}</TableCell>
-                        <TableCell>{f.awayName}</TableCell>
-                        <TableCell>
-                          <Badge variant={f.status === 'scheduled' ? 'secondary' : 'default'}>{f.status}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          {f.status !== 'scheduled' ? (
-                            <Link href={`/admin/fixtures/${f.id}`} className="admin-link">
-                              Edit
-                            </Link>
-                          ) : (
-                            <Link href="/admin/fixtures" className="admin-link">
-                              Enter result
-                            </Link>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          )}
+          <ResponsiveList
+            rows={fixtures}
+            rowKey={(f) => f.id}
+            columns={COLUMNS}
+            emptyMessage="No league fixtures yet. Add one above, then record scores under Results."
+            renderCard={(f) => (
+              <Card>
+                <CardHeader className="flex-row items-center justify-between gap-3">
+                  <span className="text-sm text-muted-foreground">MD{f.matchday}</span>
+                  <Badge variant={f.status === 'scheduled' ? 'secondary' : 'default'}>{f.status}</Badge>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-1 pt-3">
+                  <p className="font-semibold">
+                    {f.homeName} <span className="tabular-nums">{formatScore(f.homeGoals, f.awayGoals, f.status)}</span> {f.awayName}
+                  </p>
+                </CardContent>
+                <div className="flex items-center rounded-b-(--r-xl) border-t border-(--line-hairline) bg-(--color-paper)/35 p-(--card-spacing)">
+                  <Link href={f.status !== 'scheduled' ? `/admin/fixtures/${f.id}` : '/admin/fixtures'} className="text-sm font-semibold text-(--color-accent)! hover:underline">
+                    {f.status !== 'scheduled' ? 'Edit' : 'Enter result'}
+                  </Link>
+                </div>
+              </Card>
+            )}
+          />
 
           {scheduled.length > 0 ? (
-            <p className="admin-muted" style={{ marginTop: '1rem' }}>
+            <p className="mt-4 text-sm text-muted-foreground">
               {scheduled.length} unplayed. Scores:{' '}
-              <Link href="/admin/fixtures" className="admin-link">
+              <Link href="/admin/fixtures" className="font-semibold text-(--color-accent)! hover:underline">
                 Results
               </Link>{' '}
               (same matchday and players).

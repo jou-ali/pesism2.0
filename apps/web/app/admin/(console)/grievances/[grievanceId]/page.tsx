@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminGrievancePanel } from '@/components/admin-grievance-panel';
+import { AdminPageHead } from '@/components/admin-page-head';
 import { getAdminGrievance } from '@/lib/tournax-api';
 
 export const dynamic = 'force-dynamic';
@@ -26,14 +26,7 @@ export default async function AdminGrievanceDetailPage({
 
   return (
     <>
-      <header className="admin-page-head">
-        <div>
-          <p className="admin-eyebrow">
-            <Link href="/admin/grievances">Grievances</Link> / Review
-          </p>
-          <h2>{grievance?.subject ?? 'Grievance'}</h2>
-        </div>
-      </header>
+      <AdminPageHead eyebrow="Grievances / Review" title={grievance?.subject ?? 'Grievance'} />
 
       {error || !grievance ? (
         <AdminApiStatus error={error ?? 'Grievance not found'} />

@@ -6,6 +6,7 @@ import { closeMatchdayAction, setTournamentStatusAction, startMatchdayAction } f
 import type { TournamentStatusValue } from '@/lib/tournax-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -106,7 +107,7 @@ export function AdminSeasonControl({
   }
 
   return (
-    <div style={{ display: 'grid', gap: '1.25rem' }}>
+    <div className="flex flex-col gap-5">
       <Card>
         <CardHeader>
           <CardTitle>Phase</CardTitle>
@@ -115,9 +116,9 @@ export function AdminSeasonControl({
             {currentMatchday ? ` · Matchday ${currentMatchday} of ${totalMatchdays || currentMatchday}` : null}.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Select value={status} onValueChange={(v) => onStatusChange(v as TournamentStatusValue)} disabled={busy}>
-            <SelectTrigger style={{ maxWidth: '20rem' }}>
+            <SelectTrigger className="w-full max-w-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -139,26 +140,23 @@ export function AdminSeasonControl({
             does not block.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={onStartMatchday} style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', alignItems: 'end' }}>
-            <div>
-              <label htmlFor="md-number" className="admin-eyebrow" style={{ display: 'block', marginBottom: '.35rem' }}>
-                Matchday
-              </label>
+        <CardContent className="pt-4">
+          <form onSubmit={onStartMatchday} className="flex flex-wrap items-end gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="md-number">Matchday</Label>
               <Input
                 id="md-number"
                 type="number"
+                inputMode="numeric"
                 min={1}
                 value={matchdayNumber}
                 onChange={(e) => setMatchdayNumber(e.target.value)}
-                style={{ width: '7rem' }}
+                className="w-28"
                 disabled={busy}
               />
             </div>
-            <div>
-              <label htmlFor="md-deadline" className="admin-eyebrow" style={{ display: 'block', marginBottom: '.35rem' }}>
-                Deadline
-              </label>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="md-deadline">Deadline</Label>
               <Input
                 id="md-deadline"
                 type="datetime-local"
@@ -179,7 +177,7 @@ export function AdminSeasonControl({
           <CardTitle>Close current matchday</CardTitle>
           <CardDescription>Unplayed matches on the current matchday are marked disputed.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button type="button" variant="destructive" disabled={busy || !currentMatchday}>
@@ -204,8 +202,8 @@ export function AdminSeasonControl({
         </CardContent>
       </Card>
 
-      {notice ? <p style={{ color: 'var(--color-success)' }}>{notice}</p> : null}
-      {error ? <p style={{ color: 'var(--destructive)' }}>{error}</p> : null}
+      {notice ? <p className="text-sm" style={{ color: 'var(--color-success)' }}>{notice}</p> : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
     </div>
   );
 }

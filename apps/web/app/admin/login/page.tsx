@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
 import { loginAction } from './actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import '../admin.css';
 
 export const metadata: Metadata = {
@@ -18,21 +22,23 @@ export default async function AdminLoginPage({
 
   return (
     <div className="admin-shell admin-shell--center">
-      <form className="admin-card admin-login" action={loginAction}>
-        <p className="admin-eyebrow">Staff only</p>
-        <h1>TOURNAX admin</h1>
-        <p className="admin-muted">Not linked from the public site.</p>
-        {showError ? <p className="admin-login-error">Wrong password.</p> : null}
-        <input type="hidden" name="next" value={next} />
-        <label className="admin-field">
-          <span>Password</span>
-          <input type="password" name="password" required autoComplete="current-password" />
-        </label>
-        <button type="submit" className="admin-btn admin-btn--primary">
-          Sign in
-        </button>
-      </form>
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>TOURNAX admin</CardTitle>
+          <CardDescription>Staff only · not linked from the public site.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={loginAction} className="flex flex-col gap-4">
+            {showError ? <p className="admin-login-error">Wrong password.</p> : null}
+            <input type="hidden" name="next" value={next} />
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="admin-password">Password</Label>
+              <Input id="admin-password" type="password" name="password" required autoComplete="current-password" />
+            </div>
+            <Button type="submit">Sign in</Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-
