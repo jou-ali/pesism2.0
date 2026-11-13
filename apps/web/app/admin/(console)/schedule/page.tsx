@@ -61,7 +61,7 @@ export default async function AdminSchedulePage() {
               <CardTitle>Add a fixture</CardTitle>
               <CardDescription>Pick matchday, home, and away. Published rows show on the public fixtures page.</CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               <AdminScheduleMatchForm approved={approved} />
             </CardContent>
           </Card>
@@ -87,7 +87,7 @@ export default async function AdminSchedulePage() {
                   <span className="text-sm text-muted-foreground">MD{f.matchday}</span>
                   <Badge variant={f.status === 'scheduled' ? 'secondary' : 'default'}>{f.status}</Badge>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-1 pt-3">
+                <CardContent className="flex flex-col gap-1">
                   <p className="font-semibold">
                     {f.homeName} <span className="tabular-nums">{formatScore(f.homeGoals, f.awayGoals, f.status)}</span> {f.awayName}
                   </p>

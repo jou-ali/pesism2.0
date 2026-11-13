@@ -116,7 +116,7 @@ export function AdminSeasonControl({
             {currentMatchday ? ` · Matchday ${currentMatchday} of ${totalMatchdays || currentMatchday}` : null}.
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent>
           <Select value={status} onValueChange={(v) => onStatusChange(v as TournamentStatusValue)} disabled={busy}>
             <SelectTrigger className="w-full max-w-xs">
               <SelectValue />
@@ -140,7 +140,7 @@ export function AdminSeasonControl({
             does not block.
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent>
           <form onSubmit={onStartMatchday} className="flex flex-wrap items-end gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="md-number">Matchday</Label>
@@ -177,7 +177,7 @@ export function AdminSeasonControl({
           <CardTitle>Close current matchday</CardTitle>
           <CardDescription>Unplayed matches on the current matchday are marked disputed.</CardDescription>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button type="button" variant="destructive" disabled={busy || !currentMatchday}>

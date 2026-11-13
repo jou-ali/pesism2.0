@@ -97,7 +97,7 @@ export default async function AdminRegistrationAuditPage() {
                 <Badge variant="outline">{row.eventType}</Badge>
                 <span className="text-xs tabular-nums text-muted-foreground">{formatWhen(row.createdAt)}</span>
               </CardHeader>
-              <CardContent className="flex flex-col gap-1 pt-3 text-sm text-muted-foreground">
+              <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">
                 <p>{row.email ?? '—'} · {row.formCity ?? '—'}</p>
                 <p className="tabular-nums">{row.ipAddress ?? '—'} · {location(row)}</p>
                 <p className="truncate" title={row.referer ?? undefined}>{row.referer ?? '—'}</p>

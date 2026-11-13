@@ -74,7 +74,7 @@ export default async function AdminResultsPage({
                 resolved).
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent>
               <AdminRecordMatchForm scheduled={fixtures} />
             </CardContent>
           </Card>
@@ -109,7 +109,7 @@ export default async function AdminResultsPage({
                   <span className="text-sm text-muted-foreground">MD{m.matchday}</span>
                   <Badge variant={statusBadgeVariant(m.status)}>{m.status}</Badge>
                 </CardHeader>
-                <CardContent className="flex flex-col gap-1 pt-3">
+                <CardContent className="flex flex-col gap-1">
                   <p className="font-semibold">
                     {m.homeName} <span className="tabular-nums">{m.homeGoals !== null && m.awayGoals !== null ? `${m.homeGoals}–${m.awayGoals}` : 'vs'}</span> {m.awayName}
                   </p>

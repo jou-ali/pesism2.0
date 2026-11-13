@@ -67,8 +67,8 @@ export default async function AdminOverviewPage() {
         <CardHeader>
           <CardTitle>Registration window</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4">
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-2">
+        <CardContent>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
             <dt className="text-sm text-muted-foreground">Status</dt>
             <dd className="font-semibold">{dashboard.registrationOpen ? 'Open' : 'Closed'}</dd>
             <dt className="text-sm text-muted-foreground">Phase</dt>

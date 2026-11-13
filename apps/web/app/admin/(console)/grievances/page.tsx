@@ -70,7 +70,7 @@ export default async function AdminGrievancesPage() {
                 <span className="text-sm text-muted-foreground tabular-nums">{new Date(g.createdAt).toLocaleDateString('en-IN')}</span>
                 <Badge variant={STATUS_VARIANT[g.status]}>{STATUS_LABEL[g.status]}</Badge>
               </CardHeader>
-              <CardContent className="flex flex-col gap-1 pt-3">
+              <CardContent className="flex flex-col gap-1">
                 <p className="font-semibold">{g.subject}</p>
                 <p className="text-sm text-muted-foreground">{g.playerName} · {g.category} · {g.commentCount} note{g.commentCount === 1 ? '' : 's'}</p>
               </CardContent>

@@ -65,7 +65,7 @@ export default async function AdminPlayersPage() {
                 </div>
                 <Badge variant={row.approved ? 'default' : 'secondary'}>{row.approved ? 'Approved' : 'Pending'}</Badge>
               </CardHeader>
-              <CardContent className="flex flex-col gap-1 pt-3 text-sm text-muted-foreground">
+              <CardContent className="flex flex-col gap-1 text-sm text-muted-foreground">
                 <p>{row.city} · {row.email}</p>
                 <p className="tabular-nums">{row.waNumber}</p>
                 <Badge variant={row.emailVerified ? 'default' : 'secondary'} className="w-fit">

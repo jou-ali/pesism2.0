@@ -15,7 +15,7 @@ export function AdminApiStatus({ error }: { error: string }) {
             : 'The admin UI needs the Spring API connected to your Supabase Postgres.'}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 pt-4">
+      <CardContent className="flex flex-col gap-3">
         {!staleApi ? (
           <ol className="list-decimal space-y-1.5 pl-5 text-sm text-foreground/80">
             <li>

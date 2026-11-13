@@ -228,7 +228,7 @@ function TeamCard({ row }: { row: TeamRow }) {
         </div>
         <Badge variant={row.hasCrest ? 'default' : 'secondary'}>{row.hasCrest ? 'Crest added' : 'Missing'}</Badge>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 pt-3">
+      <CardContent className="flex flex-col gap-3">
         <NameField row={row} state={state} />
         <ColorSwatches state={state} />
         {state.error ? <p className="text-xs text-destructive">{state.error}</p> : null}

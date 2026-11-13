@@ -80,7 +80,7 @@ export function AdminGrievancePanel({ grievance }: { grievance: GrievanceDetail 
         <CardHeader>
           <CardTitle>Status</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-end">
+        <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex flex-1 flex-col gap-1.5">
             <Label htmlFor="grievance-status">Committee decision</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as GrievanceStatus)} disabled={busy}>
@@ -106,7 +106,7 @@ export function AdminGrievancePanel({ grievance }: { grievance: GrievanceDetail 
         <CardHeader>
           <CardTitle>Admin comments</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent>
           {grievance.comments.length ? (
             <ul className="flex flex-col gap-3">
               {grievance.comments.map((c) => (
