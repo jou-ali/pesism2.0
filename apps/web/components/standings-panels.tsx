@@ -1,5 +1,6 @@
 import { computeStandings, topScorers } from '@tournax/core';
 import type { SeasonCompetition } from '@/lib/season-competition';
+import { computeMovement, latestPlayedMatchday } from '@/lib/matchday-status';
 import { CompetitionComingSoon } from './competition-coming-soon';
 import { LeagueTable } from './league-table';
 import { TopScorers } from './top-scorers';
@@ -27,34 +28,34 @@ export function StandingsPanels({ competition, scorersLimit, showFootLink = fals
   const table = live ? computeStandings(playerIds, matches, points) : [];
   const scorers = live ? topScorers(playerIds, matches) : [];
   const scorersShown = scorersLimit ? scorers.slice(0, scorersLimit) : scorers;
+  const movement = live ? computeMovement(playerIds, matches, points) : null;
+  const afterMatchday = live ? latestPlayedMatchday(matches) : null;
 
   return (
     <div className="standings__grid">
-      <div className="panel" data-reveal>
-        <div className="panel__head">
-          <h3>League table</h3>
-          {live ? <span className="chip chip--live">Live</span> : <span className="chip">Coming soon</span>}
+      <div className="card" data-reveal>
+        <div className="card__head">
+          <div className="card__head-title">
+            <h3>League table</h3>
+            {afterMatchday ? <span className="card__head-eyebrow">After matchday {afterMatchday}</span> : null}
+          </div>
+          {live ? <span className="pill pill--live">Live</span> : <span className="pill pill--muted">Coming soon</span>}
         </div>
         {live ? (
-          <LeagueTable rows={table} qualifiers={qualifiers} playerNames={playerNames} playerCrests={playerCrests} />
+          <LeagueTable rows={table} qualifiers={qualifiers} playerNames={playerNames} playerCrests={playerCrests} movement={movement} />
         ) : (
           <CompetitionComingSoon label="The table goes live once the first results are in." />
         )}
-        <p className="panel__foot">
-          Top {qualifiers} make the quarter-finals. Everyone else goes home and reflects.
-          {showFootLink ? (
-            <>
-              {' '}
-              <a href="/table">See the full table</a>
-            </>
-          ) : null}
-        </p>
+        <div className="card__foot">
+          <span>Top {qualifiers} make the quarter-finals</span>
+          {showFootLink ? <a href="/table">See the full table &rarr;</a> : null}
+        </div>
       </div>
 
-      <div className="panel" data-reveal>
-        <div className="panel__head">
+      <div className="card" data-reveal>
+        <div className="card__head">
           <h3>Golden Boot race</h3>
-          {live ? <span className="chip chip--live">Live</span> : <span className="chip">Coming soon</span>}
+          {live ? <span className="pill pill--live">Live</span> : <span className="pill pill--muted">Coming soon</span>}
         </div>
         {live ? (
           <TopScorers scorers={scorersShown} playerNames={playerNames} playerCrests={playerCrests} />

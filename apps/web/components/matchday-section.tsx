@@ -9,7 +9,7 @@ import {
   type SeasonPlayer,
 } from '@/lib/season-competition';
 import type { TournamentStatusValue } from '@/lib/tournax-api';
-import { isCountedMatch, matchdayChipsByNumber } from '@/lib/matchday-status';
+import { computeMovement, isCountedMatch, latestPlayedMatchday, matchdayChipsByNumber } from '@/lib/matchday-status';
 import { computeLastSeasonRecap, type LastSeasonRecap } from '@/lib/last-season';
 import { groupByMatchday } from './fixtures-panels';
 import { SplitHeading } from './split-heading';
@@ -159,6 +159,14 @@ function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCom
 
   const playerIds = competition.players.map((p) => p.id);
   const table = competition.hasResults ? computeStandings(playerIds, competition.matches, competition.points) : [];
+  const movement = competition.hasResults ? computeMovement(playerIds, competition.matches, competition.points) : null;
+  const afterMatchday = competition.hasResults ? latestPlayedMatchday(competition.matches) : null;
+  const playerCrests = Object.fromEntries(
+    competition.players.map((p) => [
+      p.id,
+      { teamName: p.teamName, crestUrl: p.crestUrl, primaryColor: p.primaryColor, secondaryColor: p.secondaryColor },
+    ]),
+  );
   const chips = matchdayChipsByNumber(matchdays);
 
   return (
@@ -207,15 +215,25 @@ function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCom
         )}
 
         {table.length ? (
-          <div className="panel" style={{ marginTop: '1.5rem' }} data-reveal>
-            <div className="panel__head">
-              <h3>League table</h3>
-              <span className="chip chip--live">Live</span>
+          <div className="card" style={{ marginTop: '1.5rem' }} data-reveal>
+            <div className="card__head">
+              <div className="card__head-title">
+                <h3>League table</h3>
+                {afterMatchday ? <span className="card__head-eyebrow">After matchday {afterMatchday}</span> : null}
+              </div>
+              <span className="pill pill--live">Live</span>
             </div>
-            <LeagueTable rows={table} qualifiers={competition.knockoutQualifiers} playerNames={competition.playerNames} />
-            <p className="panel__foot">
-              Top {competition.knockoutQualifiers} make the quarter-finals. <a href="/table">See the full table</a>
-            </p>
+            <LeagueTable
+              rows={table}
+              qualifiers={competition.knockoutQualifiers}
+              playerNames={competition.playerNames}
+              playerCrests={playerCrests}
+              movement={movement}
+            />
+            <div className="card__foot">
+              <span>Top {competition.knockoutQualifiers} make the quarter-finals</span>
+              <a href="/table">See the full table &rarr;</a>
+            </div>
           </div>
         ) : null}
       </div>

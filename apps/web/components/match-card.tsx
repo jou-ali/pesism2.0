@@ -30,16 +30,16 @@ export function matchStatusChip(status: MatchStatus): { label: string; className
   switch (status) {
     case 'confirmed':
     case 'resolved':
-      return { label: 'Full time', className: 'match-card__chip--success' };
+      return { label: 'Full time', className: 'pill--success' };
     case 'forfeit':
-      return { label: 'Forfeit', className: 'match-card__chip--muted' };
+      return { label: 'Forfeit', className: 'pill--muted' };
     case 'disputed':
-      return { label: 'Disputed', className: 'match-card__chip--disputed' };
+      return { label: 'Disputed', className: 'pill--danger' };
     case 'pending_confirmation':
-      return { label: 'Awaiting confirmation', className: 'match-card__chip--yellow' };
+      return { label: 'Awaiting confirmation', className: 'pill--yellow' };
     case 'scheduled':
     default:
-      return { label: 'To be played', className: 'match-card__chip--muted' };
+      return { label: 'To be played', className: 'pill--muted' };
   }
 }
 
@@ -123,10 +123,16 @@ export function MatchCard({
   } as CSSProperties;
 
   return (
-    <Link href={`/matches/${match.id}`} className="match-card" style={tint} data-status={match.status} data-reveal>
-      <div className="match-card__head">
+    <Link
+      href={`/matches/${match.id}`}
+      className="match-card card card--tint"
+      style={tint}
+      data-status={match.status}
+      data-reveal
+    >
+      <div className="card__head">
         <span className="match-card__label">{label ?? `MATCH ${String(match.index).padStart(2, '0')}`}</span>
-        <span className={`match-card__chip ${chip.className}`}>{chip.label}</span>
+        <span className={`pill ${chip.className}`}>{chip.label}</span>
       </div>
 
       <div className="match-card__body">
@@ -145,9 +151,9 @@ export function MatchCard({
         <Side side={away} muted={homeWon} />
       </div>
 
-      <div className="match-card__foot">
+      <div className="card__foot">
         <span className="match-card__foot-text">{foot}</span>
-        <span className="match-card__foot-cta">Details &rarr;</span>
+        <span className="card__foot-cta">Details &rarr;</span>
       </div>
     </Link>
   );

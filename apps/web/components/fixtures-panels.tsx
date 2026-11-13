@@ -23,7 +23,7 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
       <div className="panel" data-reveal>
         <div className="panel__head">
           <h3>League stage</h3>
-          <span className="chip">To be announced</span>
+          <span className="pill pill--muted">To be announced</span>
         </div>
         <CompetitionComingSoon label="Fixtures will appear here once the organiser publishes the league schedule." />
       </div>
@@ -37,7 +37,7 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
   return (
     <div className="fixtures">
       {matchdays.map(([matchday, matches]) => {
-        const chip = chips.get(matchday) ?? { label: 'Scheduled' as const, className: 'chip' };
+        const chip = chips.get(matchday) ?? { label: 'Scheduled' as const, className: 'pill pill--muted' };
         return (
           <div className="panel fixture-day" data-reveal key={matchday}>
             <div className="panel__head">

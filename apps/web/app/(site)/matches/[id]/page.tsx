@@ -35,7 +35,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
             <p className="matchday__eyebrow" style={{ margin: 0 }}>
               Matchday {match.matchday}
             </p>
-            <span className={`match-card__chip ${chip.className}`}>{chip.label}</span>
+            <span className={`pill ${chip.className}`}>{chip.label}</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '1.5rem', marginTop: '1rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', textAlign: 'center' }}>
