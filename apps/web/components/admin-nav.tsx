@@ -12,6 +12,7 @@ import {
   ClipboardList,
   Trophy,
   MessageSquareWarning,
+  Share2,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -27,6 +28,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: '/admin/players', label: 'Players', icon: Users },
       { href: '/admin/teams', label: 'Teams', icon: Shield },
       { href: '/admin/registration-audit', label: 'Reg audit', icon: ScrollText },
+      { href: '/admin/share', label: 'Share images', icon: Share2 },
     ],
   },
   {

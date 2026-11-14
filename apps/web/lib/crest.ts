@@ -1,4 +1,4 @@
-function initialsFor(teamName: string): string {
+export function initialsFor(teamName: string): string {
   const words = teamName.trim().split(/\s+/).filter(Boolean);
   if (words.length >= 2) {
     return (words[0][0] + words[1][0]).toUpperCase();

@@ -17,6 +17,8 @@ import { Button } from './ui/button';
 import { TeamCrest } from './team-crest';
 import { MatchCard, type MatchCardSide } from './match-card';
 import { LeagueTable } from './league-table';
+import { ShareImageActions } from './share-image-actions';
+import { getMatchdayPreviewData, posterVersion } from '@/lib/share/data';
 
 const VALID_STATUSES = new Set(['draft', 'registration', 'league', 'knockout', 'finished']);
 
@@ -127,7 +129,7 @@ async function RegistrationPhase({ competition }: { competition: SeasonCompetiti
   );
 }
 
-function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCompetition; overrideMatchday?: number }) {
+async function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCompetition; overrideMatchday?: number }) {
   const matchdays = groupByMatchday(competition);
   const byId = new Map(competition.players.map((p) => [p.id, p]));
 
@@ -169,6 +171,9 @@ function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCom
   );
   const chips = matchdayChipsByNumber(matchdays);
 
+  const isCurrentMd = selectedMd === competition.currentMatchday;
+  const previewData = isCurrentMd ? await getMatchdayPreviewData(selectedMd, false) : null;
+
   return (
     <section className="section matchday" id="matchday" aria-labelledby="matchday-title">
       <div className="container">
@@ -180,6 +185,13 @@ function LeaguePhase({ competition, overrideMatchday }: { competition: SeasonCom
           <p className="lead" data-reveal>
             {played} of {matches.length} played{countdown ? ` · ${countdown}` : ''}
           </p>
+          {previewData ? (
+            <ShareImageActions
+              imageUrl={`/api/share/matchday/${selectedMd}/preview?v=${posterVersion(previewData)}`}
+              caption={`Matchday ${String(selectedMd).padStart(2, '0')} is live 🔥 Play by ${previewData.deadline.replace('Play by ', '')}`}
+              filename={`matchday-${selectedMd}-preview.png`}
+            />
+          ) : null}
         </div>
 
         <nav className="matchday-tabs" aria-label="Matchdays">
