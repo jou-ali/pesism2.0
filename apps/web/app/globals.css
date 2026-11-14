@@ -275,6 +275,16 @@ ul{list-style:none;margin:0;padding:0}
 .format-item h3{font-size:var(--fs-h3);font-weight:var(--display-weight);text-transform:uppercase;line-height:1.1}
 .format-item p{color:var(--muted-foreground);font-size:.95rem}
 
+.group-draw__shell{display:flex;justify-content:center}
+.group-draw__view{width:min(56rem,100%);margin:0;padding:clamp(1.5rem,4vw,2.25rem);display:flex;flex-direction:column;align-items:center;gap:clamp(1.5rem,3vw,2rem);text-align:center}
+.group-draw__head{display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:38rem}
+.group-draw__lead{margin:0}
+.group-draw__stage{width:100%;margin:0;overflow:hidden;border-radius:var(--r-md);line-height:0;background:#0a0610;border:1px solid var(--line-2)}
+.group-draw__video{display:block;width:100%;max-height:min(62vh,640px);height:auto;margin-inline:auto;pointer-events:none;object-fit:contain;object-position:center}
+@media (min-width:720px){.group-draw__video{max-height:min(68vh,720px)}}
+@media (prefers-reduced-motion:reduce){.group-draw__video{display:none}}
+@media (prefers-reduced-motion:reduce){.group-draw__stage{min-height:14rem;display:grid;place-items:center;color:var(--muted-2);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.group-draw__stage::after{content:"Group draw replay"}}
+
 .quote-divider{padding:clamp(2.5rem,6vw,4.5rem) 1.5rem;text-align:center}
 .quote-divider p{max-width:40rem;margin-inline:auto;font-family:var(--font-headline);font-size:clamp(1.25rem,1.4vw + 1rem,2rem);line-height:1.15;letter-spacing:var(--tracking-headline);text-transform:uppercase;color:var(--white)}
 
