@@ -1,6 +1,7 @@
 import { Cta } from '@/components/cta';
 import { RulesCallout } from '@/components/rules-callout';
 import { Format } from '@/components/format';
+import { GroupDrawSection } from '@/components/group-draw-section';
 import { Hero } from '@/components/hero';
 import { MatchdaySection } from '@/components/matchday-section';
 import { PlayersCarousel } from '@/components/players-carousel';
@@ -26,6 +27,7 @@ export default async function Home({
       <Hero registrationOpen={registrationOpen} />
       <MatchdaySection phase={phase} md={Number.isFinite(md) ? md : undefined} />
       <Format />
+      <GroupDrawSection />
       <QuoteDivider text="The table is the only opinion that matters." />
       <StandingsSection />
       <PlayersCarousel />

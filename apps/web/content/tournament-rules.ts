@@ -337,6 +337,22 @@ export const TOURNAMENT_RULES_SECTIONS: RulesSection[] = [
           },
         ],
       },
+      {
+        id: 'statistics-screenshots',
+        title: 'Screenshots — both players',
+        blocks: [
+          {
+            type: 'rule',
+            num: '5.6',
+            text: 'Do not rely only on your opponent’s screenshots. Images can be ||edited||, ||manipulated|| or misused to change match statistics.',
+          },
+          {
+            type: 'rule',
+            num: '5.7',
+            text: '||Both players|| are equally responsible for capturing and keeping screenshots of the ||match result and statistics|| immediately after each match.',
+          },
+        ],
+      },
     ],
   },
   {
