@@ -3,6 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchStatus } from '@tournax/core';
 import { avatarSvg } from '@/lib/avatar';
+import { fallbackPaletteFor } from '@/lib/crest';
+import { formatMatchdayDeadline } from '@/lib/format-deadline';
 import { TeamCrest } from './team-crest';
 
 export type MatchCardSide = {
@@ -11,8 +13,6 @@ export type MatchCardSide = {
   avatarUrl: string | null;
   teamName: string | null;
   crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
 };
 
 export type MatchCardMatch = {
@@ -43,14 +43,10 @@ export function matchStatusChip(status: MatchStatus): { label: string; className
   }
 }
 
-function formatDeadline(iso: string): string {
-  return new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(iso));
-}
-
 function footerLine(match: MatchCardMatch, home: MatchCardSide, away: MatchCardSide): string | null {
   switch (match.status) {
     case 'scheduled':
-      return match.deadline ? `Play by ${formatDeadline(match.deadline)}` : null;
+      return match.deadline ? `Deadline: ${formatMatchdayDeadline(match.deadline)}` : null;
     case 'pending_confirmation':
       return 'Score in · waiting for confirmation';
     case 'disputed':
@@ -75,14 +71,7 @@ function hexWithAlpha(hex: string | null, alphaHex: string): string | undefined 
 function Side({ side, muted }: { side: MatchCardSide; muted: boolean }) {
   return (
     <div className="match-card__side" style={{ opacity: muted ? 0.6 : 1 }}>
-      <TeamCrest
-        teamName={side.teamName}
-        crestUrl={side.crestUrl}
-        primaryColor={side.primaryColor}
-        secondaryColor={side.secondaryColor}
-        size={64}
-        className="match-card__crest"
-      />
+      <TeamCrest teamName={side.teamName} crestUrl={side.crestUrl} size={64} className="match-card__crest" />
       <p className="match-card__team">{side.teamName ?? 'Team pending'}</p>
       <div className="match-card__player">
         {side.avatarUrl ? (
@@ -118,8 +107,8 @@ export function MatchCard({
   const foot = footerLine(match, home, away);
 
   const tint = {
-    '--home-tint': hexWithAlpha(home.primaryColor, '2e'),
-    '--away-tint': hexWithAlpha(away.primaryColor, '2e'),
+    '--home-tint': home.teamName ? hexWithAlpha(fallbackPaletteFor(home.teamName)[0], '2e') : undefined,
+    '--away-tint': away.teamName ? hexWithAlpha(fallbackPaletteFor(away.teamName)[0], '2e') : undefined,
   } as CSSProperties;
 
   return (

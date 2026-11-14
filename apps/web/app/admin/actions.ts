@@ -5,7 +5,6 @@ import {
   addGrievanceComment,
   closeCurrentMatchday,
   closeRegistration,
-  issueTeamSetupLink,
   openRegistration,
   recordAdminMatch,
   scheduleAdminFixture,
@@ -22,7 +21,7 @@ import {
   type UpdateMatchBody,
   type UpdateTeamBody,
 } from '@/lib/tournax-api';
-import { uploadPlayerAvatar, uploadTeamCrest } from '@/lib/supabase-server';
+import { removeTeamCrest, uploadPlayerAvatar, uploadTeamCrest } from '@/lib/supabase-server';
 
 export async function closeRegistrationAction() {
   await closeRegistration();
@@ -87,6 +86,7 @@ export async function updateTeamAction(playerId: string, body: UpdateTeamBody) {
   revalidatePath('/admin/teams');
   revalidatePath('/');
   revalidatePath('/players');
+  revalidatePath('/table');
   return row;
 }
 
@@ -95,22 +95,24 @@ export async function uploadTeamCrestAction(playerId: string, formData: FormData
   if (!(crest instanceof Blob) || crest.size === 0) {
     throw new Error('Choose a crest image.');
   }
-  const crestUrl = await uploadTeamCrest(crest);
-  const primaryColor = formData.get('primaryColor');
-  const secondaryColor = formData.get('secondaryColor');
-  const row = await updateTeam(playerId, {
-    crestUrl,
-    ...(typeof primaryColor === 'string' && primaryColor ? { primaryColor } : {}),
-    ...(typeof secondaryColor === 'string' && secondaryColor ? { secondaryColor } : {}),
-  });
+  const previousCrestUrl = formData.get('previousCrestUrl');
+  const crestUrl = await uploadTeamCrest(crest, playerId, typeof previousCrestUrl === 'string' ? previousCrestUrl : null);
+  const row = await updateTeam(playerId, { crestUrl });
   revalidatePath('/admin/teams');
   revalidatePath('/');
   revalidatePath('/players');
+  revalidatePath('/table');
   return row;
 }
 
-export async function issueTeamSetupLinkAction(playerId: string) {
-  return issueTeamSetupLink(playerId);
+export async function removeTeamCrestAction(playerId: string, crestUrl: string) {
+  await removeTeamCrest(crestUrl);
+  const row = await updateTeam(playerId, { crestUrl: '' });
+  revalidatePath('/admin/teams');
+  revalidatePath('/');
+  revalidatePath('/players');
+  revalidatePath('/table');
+  return row;
 }
 
 export async function setTournamentStatusAction(status: TournamentStatusValue) {

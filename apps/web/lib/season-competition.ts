@@ -14,8 +14,6 @@ export type SeasonPlayer = {
   avatarUrl: string | null;
   teamName: string | null;
   crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
 };
 
 export type KnockoutMatch = Match & { stage: MatchStage };
@@ -55,8 +53,6 @@ type ApiCompetition = {
     avatarUrl?: string | null;
     teamName?: string | null;
     crestUrl?: string | null;
-    primaryColor?: string | null;
-    secondaryColor?: string | null;
   }>;
   matches: Array<{
     id: string;
@@ -112,8 +108,6 @@ export async function fetchSeasonCompetition(season = CURRENT_SEASON): Promise<S
         avatarUrl: p.avatarUrl ?? null,
         teamName: p.teamName ?? null,
         crestUrl: p.crestUrl ?? null,
-        primaryColor: p.primaryColor ?? null,
-        secondaryColor: p.secondaryColor ?? null,
       })),
       matches,
       knockoutMatches,
@@ -131,8 +125,6 @@ export type MatchSide = {
   avatarUrl: string | null;
   teamName: string | null;
   crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
 };
 
 export type MatchDetail = {

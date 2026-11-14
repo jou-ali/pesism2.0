@@ -2,6 +2,8 @@
  * paper: oklch(9% 0.02 260) · accent: oklch(90% 0.25 150) · display: Onest · body: Onest · hero: Settled · nav: flat row · footer: mast · signature: kept
  * axes: dark/display-heavy/chromatic-green · posture: Settled · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P1 H1 E1 S1 R1 V1 · weakest: label tracking across a sports table, set to sentence case with the numeric columns carrying tabular-nums instead */
+@layer theme, base, components, utilities;
+
 @import url("./tokens.css");
 @import url("./base.css");
 @import "tailwindcss";
@@ -133,11 +135,11 @@ ul{list-style:none;margin:0;padding:0}
 
 /* Solid surface — replaces blanket glassmorphism with a surface step + hairline.
    Shared by every card-like element site-wide (.card, .panel, the carousel .player,
-   .reg-player, .modal__dialog) — see each selector's own rule for its layout-only
+   .modal__dialog) — see each selector's own rule for its layout-only
    properties (padding, flex, grid). Overflow is split out separately so .modal__dialog
    (which needs its own overflow-y: auto for scrolling) isn't forced to overflow:hidden. */
-.card,.panel,.player,.reg-player,.modal__dialog{background:var(--navy);border:1px solid var(--line-card);border-radius:var(--r-xl)}
-.card,.panel,.player,.reg-player{overflow:hidden}
+.card,.panel,.player,.modal__dialog{background:var(--navy);border:1px solid var(--line-card);border-radius:var(--r-xl)}
+.card,.panel,.player{overflow:hidden}
 .card--tint{position:relative}
 .card--tint::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:linear-gradient(90deg,var(--home-tint,transparent) 0%,transparent 42%,transparent 58%,var(--away-tint,transparent) 100%)}
 
@@ -311,14 +313,11 @@ ul{list-style:none;margin:0;padding:0}
 
 /* League table — CSS-grid rows, fixed column widths so the numbers never spread across the page */
 .ltable{display:flex;flex-direction:column;padding:.5rem 1rem .75rem}
-.ltable-header{display:grid;grid-template-columns:44px 24px 40px minmax(0,1fr) repeat(5,56px) 64px;align-items:center;gap:.5rem;padding:.75rem .75rem .625rem;margin-bottom:.375rem;font-size:.8125rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);border-bottom:1px solid var(--line-card)}
-.ltable-header span:nth-child(5){text-align:center}
-.ltable-header span:nth-child(6){text-align:center}
-.ltable-header span:nth-child(7){text-align:center}
-.ltable-header span:nth-child(8){text-align:center}
-.ltable-header span:nth-child(9){text-align:center}
+.ltable-header{display:grid;grid-template-columns:44px 24px 40px minmax(0,1fr) repeat(7,56px) 64px;align-items:center;gap:.5rem;padding:.75rem .75rem .625rem;margin-bottom:.375rem;font-size:.8125rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);border-bottom:1px solid var(--line-card)}
+.ltable-head-center{text-align:center}
 .ltable-header span:last-child{text-align:right}
-.ltable-row{display:grid;grid-template-columns:44px 24px 40px minmax(0,1fr) repeat(5,56px) 64px;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:var(--r-row);transition:background-color .3s var(--ease-out)}
+.ltable--no-goals .ltable-header,.ltable--no-goals .ltable-row{grid-template-columns:44px 24px 40px minmax(0,1fr) repeat(5,56px) 64px}
+.ltable-row{display:grid;grid-template-columns:44px 24px 40px minmax(0,1fr) repeat(7,56px) 64px;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:var(--r-row);transition:background-color .3s var(--ease-out)}
 .ltable-row--leader{background:rgba(var(--color-accent-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--color-accent-rgb),.35)}
 .ltable-row--below{opacity:.6}
 .ltable-pos{font-family:var(--font-headline);font-size:1.5rem;letter-spacing:var(--tracking-headline)}
@@ -338,7 +337,7 @@ ul{list-style:none;margin:0;padding:0}
 .ltable-divider__label{font-size:.6875rem;font-weight:800;letter-spacing:.18em;color:var(--green);white-space:nowrap}
 @media (max-width:640px){
   .ltable-header,.ltable-row{grid-template-columns:36px 20px 32px minmax(0,1fr) 44px 56px 64px}
-  .ltable-stat--w,.ltable-stat--d,.ltable-stat--l,.ltable-head--w,.ltable-head--d,.ltable-head--l{display:none}
+  .ltable-stat--w,.ltable-stat--d,.ltable-stat--l,.ltable-stat--gf,.ltable-stat--ga,.ltable-head--w,.ltable-head--d,.ltable-head--l,.ltable-head--gf,.ltable-head--ga{display:none}
   .ltable-crest{width:32px;height:32px}
   .ltable-team__name{font-size:1rem}
 }
@@ -400,14 +399,6 @@ ul{list-style:none;margin:0;padding:0}
 @media (min-width:900px){.bracket{grid-template-columns:repeat(var(--bracket-cols,2),minmax(0,1fr))}}
 .bracket__round h4{font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);margin:0 0 .9rem}
 .bracket__round .match-cards{grid-template-columns:1fr}
-
-/* =========================================================
-   REGISTRATION-PHASE PLAYER GRID
-   ========================================================= */
-.reg-players{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1.5rem}
-@media (min-width:700px){.reg-players{grid-template-columns:repeat(4,1fr)}}
-.reg-player{display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;padding:1rem}
-.reg-player__name{font-size:.82rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 
 /* =========================================================
    TEAM SETUP (/team-setup/[token])

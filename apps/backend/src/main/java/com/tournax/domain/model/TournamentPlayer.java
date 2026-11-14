@@ -39,12 +39,6 @@ public class TournamentPlayer {
     @Column(name = "crest_url")
     private String crestUrl;
 
-    @Column(name = "primary_color")
-    private String primaryColor;
-
-    @Column(name = "secondary_color")
-    private String secondaryColor;
-
     protected TournamentPlayer() {}
 
     public static TournamentPlayer pending(Tournament tournament, Player player) {
@@ -88,27 +82,12 @@ public class TournamentPlayer {
         return crestUrl;
     }
 
-    public String getPrimaryColor() {
-        return primaryColor;
-    }
-
-    public String getSecondaryColor() {
-        return secondaryColor;
-    }
-
     /** Admin path — always allowed, no phase lock. */
     public void setTeamName(String teamName) {
         this.teamName = teamName;
     }
 
-    /** Player-facing path — only while registration is still open; see TeamService. */
-    public void completeTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
-    public void setCrest(String crestUrl, String primaryColor, String secondaryColor) {
+    public void setCrest(String crestUrl) {
         this.crestUrl = crestUrl;
-        this.primaryColor = primaryColor;
-        this.secondaryColor = secondaryColor;
     }
 }

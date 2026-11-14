@@ -189,4 +189,10 @@ public class AdminController {
     ) {
         return matchAdminService.updateMatch(season, matchId, body);
     }
+
+    @DeleteMapping("/match-results/{matchId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMatchResult(@PathVariable int season, @PathVariable UUID matchId) {
+        matchAdminService.deleteMatch(season, matchId);
+    }
 }

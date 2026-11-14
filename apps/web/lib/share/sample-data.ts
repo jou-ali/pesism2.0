@@ -3,21 +3,21 @@ import type { Badge, ChaserRow, Fixture, Side, TableRowData, Tie } from './types
 type TeamKey = 'acm' | 'mun' | 'rma' | 'liv' | 'bar' | 'ars' | 'fcb' | 'juv' | 'psg' | 'int' | 'che' | 'atm' | 'bvb' | 'nap' | 'gla';
 
 const TEAMS: Record<TeamKey, Badge> = {
-  acm: { teamName: 'AC Milan', short: 'ACM', primaryColor: '#C8102E', secondaryColor: '#111111', ink: '#FFFFFF' },
-  mun: { teamName: 'Man Utd', short: 'MUN', primaryColor: '#DA291C', secondaryColor: '#FBE122', ink: '#FFFFFF' },
-  rma: { teamName: 'Real Madrid', short: 'RMA', primaryColor: '#FFFFFF', secondaryColor: '#FEBE10', ink: '#1E0825' },
-  liv: { teamName: 'Liverpool', short: 'LIV', primaryColor: '#C8102E', secondaryColor: '#00B2A9', ink: '#FFFFFF' },
-  bar: { teamName: 'Barcelona', short: 'BAR', primaryColor: '#A50044', secondaryColor: '#004D98', ink: '#FFFFFF' },
-  ars: { teamName: 'Arsenal', short: 'ARS', primaryColor: '#EF0107', secondaryColor: '#FFFFFF', ink: '#FFFFFF' },
-  fcb: { teamName: 'Bayern', short: 'FCB', primaryColor: '#DC052D', secondaryColor: '#0066B2', ink: '#FFFFFF' },
-  juv: { teamName: 'Juventus', short: 'JUV', primaryColor: '#111111', secondaryColor: '#FFFFFF', ink: '#FFFFFF' },
-  psg: { teamName: 'Paris SG', short: 'PSG', primaryColor: '#004170', secondaryColor: '#DA291C', ink: '#FFFFFF' },
-  int: { teamName: 'Inter', short: 'INT', primaryColor: '#0068A8', secondaryColor: '#111111', ink: '#FFFFFF' },
-  che: { teamName: 'Chelsea', short: 'CHE', primaryColor: '#034694', secondaryColor: '#FFFFFF', ink: '#FFFFFF' },
-  atm: { teamName: 'Atlético Madrid', short: 'ATM', primaryColor: '#CB3524', secondaryColor: '#272E61', ink: '#FFFFFF' },
-  bvb: { teamName: 'Dortmund', short: 'BVB', primaryColor: '#FDE100', secondaryColor: '#111111', ink: '#111111' },
-  nap: { teamName: 'Napoli', short: 'NAP', primaryColor: '#12A0D7', secondaryColor: '#003C82', ink: '#FFFFFF' },
-  gla: { teamName: 'Borussia Mönchengladbach', short: 'BMG', primaryColor: '#000000', secondaryColor: '#FFFFFF', ink: '#FFFFFF' },
+  acm: { teamName: 'AC Milan' },
+  mun: { teamName: 'Man Utd' },
+  rma: { teamName: 'Real Madrid' },
+  liv: { teamName: 'Liverpool' },
+  bar: { teamName: 'Barcelona' },
+  ars: { teamName: 'Arsenal' },
+  fcb: { teamName: 'Bayern' },
+  juv: { teamName: 'Juventus' },
+  psg: { teamName: 'Paris Saint-Germain' },
+  int: { teamName: 'Inter' },
+  che: { teamName: 'Chelsea' },
+  atm: { teamName: 'Atlético Madrid' },
+  bvb: { teamName: 'Dortmund' },
+  nap: { teamName: 'Napoli' },
+  gla: { teamName: 'Borussia Mönchengladbach' },
 };
 
 const side = (key: TeamKey, playerName: string): Side => ({ ...TEAMS[key], playerName });
@@ -30,11 +30,15 @@ export const sampleFixtures5: Fixture[] = [
   { home: side('psg', 'Arjun'), away: side('int', 'Jouhar') },
 ];
 
+/** 7 fixtures, 14 players, no bye (an even-sized tournament at full density). */
 export const sampleFixtures7: Fixture[] = [
   ...sampleFixtures5,
   { home: side('che', 'Shahal'), away: side('atm', 'Sinan') },
   { home: side('bvb', 'Jamshid'), away: side('gla', 'Khadar') },
 ];
+
+/** 6 fixtures, 12 players + 1 bye = 13 players (an odd-sized tournament at full density). */
+export const sampleFixtures6: Fixture[] = sampleFixtures7.slice(0, 6);
 
 /** Long player name, for the "names are never truncated below 10 characters" test case. */
 export const sampleBye: Side = side('nap', 'Muhammed Rashid Ali');
@@ -101,15 +105,16 @@ const tableData14: Array<[TeamKey, string, number, number, number, string, numbe
 export const sampleTableRows14: TableRowData[] = buildTableRows(tableData14, 8);
 
 export const sampleQfTies: Tie[] = [
-  { label: 'QF1', seeds: '1ST v 8TH', home: side('acm', 'Adhil'), away: side('ars', 'Imran') },
-  { label: 'QF2', seeds: '2ND v 7TH', home: side('mun', 'Rahul'), away: side('int', 'Jouhar') },
-  { label: 'QF3', seeds: '3RD v 6TH', home: side('liv', 'Faiz'), away: side('fcb', 'Vivek') },
-  { label: 'QF4', seeds: '4TH v 5TH', home: side('rma', 'Sameer'), away: side('bar', 'Nikhil') },
+  { label: 'QF1', home: side('acm', 'Adhil'), away: side('ars', 'Imran') },
+  { label: 'QF2', home: side('mun', 'Rahul'), away: side('int', 'Jouhar') },
+  { label: 'QF3', home: side('liv', 'Faiz'), away: side('fcb', 'Vivek') },
+  { label: 'QF4', home: side('rma', 'Sameer'), away: side('bar', 'Nikhil') },
 ];
 
 export const sampleSfTies: Tie[] = [
-  { label: 'SF1 · WINNER QF1 v WINNER QF4', home: side('acm', 'Adhil'), away: side('bar', 'Nikhil') },
-  { label: 'SF2 · WINNER QF2 v WINNER QF3', home: side('int', 'Jouhar'), away: side('liv', 'Faiz') },
+  // The longest team names on purpose — a standing check that no team name ever truncates.
+  { label: 'SF1 · WINNER QF1 v WINNER QF4', home: side('gla', 'Khadar'), away: side('psg', 'Arjun') },
+  { label: 'SF2 · WINNER QF2 v WINNER QF3', home: side('atm', 'Sinan'), away: side('liv', 'Faiz') },
 ];
 
 export const sampleFinal: { home: Side; away: Side } = {
@@ -122,7 +127,7 @@ export const sampleBracket = {
     {
       boxes: [
         { rows: [{ ...side('acm', 'Adhil'), score: 3, won: true }, { ...side('ars', 'Imran'), score: 1, won: false }] },
-        { rows: [{ ...side('rma', 'Sameer'), score: 1, won: false }, { ...side('bar', 'Nikhil'), score: 2, won: true }] },
+        { rows: [{ ...side('gla', 'Sameer'), score: 1, won: false }, { ...side('bar', 'Nikhil'), score: 2, won: true }] },
       ],
     },
     {
@@ -157,6 +162,7 @@ export const sampleLeagueShield = {
   leader: side('acm', 'Adhil'),
   points: 31,
   clearOfSecond: 4,
+  pointsPerMatch: 2.38,
   record: { won: 10, drawn: 1, lost: 2 },
   goalDiff: 24,
   goalsScored: 38,
@@ -195,6 +201,7 @@ export const sampleGoldenGlove = {
   leader: side('liv', 'Faiz'),
   conceded: 9,
   matches: 16,
+  wins: 12,
   fewerThanSecond: 5,
   concededPerMatch: 0.56,
   cleanSheets: 8,

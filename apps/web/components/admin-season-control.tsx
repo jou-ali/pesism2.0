@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { closeMatchdayAction, setTournamentStatusAction, startMatchdayAction } from '@/app/admin/actions';
 import type { TournamentStatusValue } from '@/lib/tournax-api';
+import { istLocalInputToIso, isoToIstLocalInput } from '@/lib/format-deadline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,11 +30,6 @@ const STATUSES: { value: TournamentStatusValue; label: string }[] = [
   { value: 'finished', label: 'Finished' },
 ];
 
-function toLocalInputValue(d: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
 export function AdminSeasonControl({
   status,
   currentMatchday,
@@ -49,8 +45,8 @@ export function AdminSeasonControl({
   const [notice, setNotice] = useState<string | null>(null);
 
   const [matchdayNumber, setMatchdayNumber] = useState(String((currentMatchday ?? 0) + 1));
-  const defaultDeadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const [deadline, setDeadline] = useState(toLocalInputValue(defaultDeadline));
+  const defaultDeadline = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const [deadline, setDeadline] = useState(isoToIstLocalInput(defaultDeadline));
 
   async function onStatusChange(next: TournamentStatusValue) {
     setBusy(true);
@@ -72,7 +68,7 @@ export function AdminSeasonControl({
     setError(null);
     setNotice(null);
     try {
-      const deadlineIso = new Date(deadline).toISOString();
+      const deadlineIso = istLocalInputToIso(deadline);
       const result = await startMatchdayAction(Number(matchdayNumber), deadlineIso);
       setNotice(
         result.missingCrestPlayerNames.length
@@ -156,7 +152,7 @@ export function AdminSeasonControl({
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="md-deadline">Deadline</Label>
+              <Label htmlFor="md-deadline">Deadline (IST)</Label>
               <Input
                 id="md-deadline"
                 type="datetime-local"

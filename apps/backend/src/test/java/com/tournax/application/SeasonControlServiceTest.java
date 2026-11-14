@@ -96,7 +96,7 @@ class SeasonControlServiceTest {
     @Test
     void startsMatchdayAndWarnsOnMissingCrestsWithoutBlocking() {
         TournamentPlayer withCrest = approvedPlayer("Arjun", "Shadow FC");
-        withCrest.setCrest("https://x/crest.png", "#111111", "#222222");
+        withCrest.setCrest("https://x/crest.png");
         TournamentPlayer noCrest = approvedPlayer("Vinay", "Night Wolves");
         when(tournamentPlayerRepository.findApprovedByTournamentIdWithPlayer(tournamentId))
             .thenReturn(List.of(withCrest, noCrest));

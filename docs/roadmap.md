@@ -17,15 +17,15 @@ Tick items off as they ship. Keep each phase shippable on its own.
 
 ## Phase 2: Backend + admin
 Built as a Spring Boot API (`apps/backend`) over Supabase Postgres via Flyway migrations
-(`V1`...`V15`), not the originally-planned Supabase-direct-from-Next.js approach — see
+(`V1`...`V16`), not the originally-planned Supabase-direct-from-Next.js approach — see
 `ARCHITECTURE.md`.
 - [x] Backend schema via Flyway (`apps/backend/src/main/resources/db/migration`)
 - [x] Registration form (email OTP) writes to `players` + `tournament_players` (pending approval)
 - [x] Admin auth (password-gated admin console session)
 - [x] Admin: approve players, generate/schedule league fixtures, enter/edit results, grievances,
       fair play stats, audit log
-- [x] Players pick a team name at registration; admin manages crests/colours and a one-time
-      "complete your team" link for players who registered before team names existed
+- [x] Admin-only team management (Admin → Teams): team name + crest upload, no player-facing
+      setup flow, no stored team colours (fallback crest colours are hash-derived from the name)
 - [x] Admin Season Control: phase (draft/registration/league/knockout/finished), start/close
       matchday (blocks on missing team names for MD1, warns-only on missing crests)
 - [x] Public table and top scorers computed with `@tournax/core`

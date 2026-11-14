@@ -1,0 +1,116 @@
+<!-- Design reference for the website MatchCard component (apps/web/components/match-card.tsx). Exported from the TOURNAX design canvas.
+     /_blob/6ee48078... = apps/web/app/fonts/furore/Furore.otf. Sample data only. The six cards show every match state. Build with the site CSS tokens, not inline styles. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Website match card</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&amp;display=swap">
+<style>
+@font-face{font-family:"Furore";src:url(/_blob/6ee480781b6660a899e00b3ad8dfe437) format("opentype");font-display:block}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 900px; box-sizing: border-box; background: #1E0825; color: #F3F0EA; font-family: Onest, sans-serif; padding: 56px 48px; display: flex; flex-direction: column; gap: 32px;">
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between;">
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<span style="font-size: 13px; font-weight: 800; letter-spacing: 0.18em; color: #DED002;">MATCHDAY 01 · PLAY BY SUN, 23 NOV</span>
+<span style="font-family: Furore, sans-serif; font-size: 44px; line-height: 1;">Match card · every state</span>
+</div>
+<span style="font-size: 15px; color: #9E84AE;">Desktop 3-up · 2-up tablet · 1-up mobile</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px;">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="6">
+<div style="position: relative; display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; background: #27092F; border: 1px solid {{c.border}};">
+<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(90deg, {{c.h.c1}}2e 0%, rgba(39,9,47,0) 42%, rgba(39,9,47,0) 58%, {{c.a.c1}}2e 100%);"></div>
+
+<div style="position: relative; display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid rgba(243,240,234,0.08);">
+<span style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; color: #9E84AE;">{{c.label}}</span>
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 0.04em; padding: 5px 12px; border-radius: 999px; border: 1px solid {{c.chipColor}}; color: {{c.chipColor}};">{{c.chip}}</span>
+</div>
+
+<div style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); align-items: center; padding: 24px 16px 22px;">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; min-width: 0; opacity: {{c.hOp}};">
+<svg width="64" height="75" viewBox="0 0 72 84" aria-hidden="true"><path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{c.h.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path><path d="M36 2 68 12v8H4v-8z" fill="{{c.h.c2}}"></path><text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{c.h.ink}}">{{c.h.short}}</text></svg>
+<span style="font-family: Furore, sans-serif; font-size: 15px; line-height: 1.2; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{c.h.team}}</span>
+<span style="display: flex; align-items: center; gap: 8px; max-width: 100%; font-size: 13px; color: #CBB8D9;"><span style="flex: none; width: 24px; height: 24px; border-radius: 50%; background: #4A1C58; border: 1px solid rgba(243,240,234,0.2);"></span><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.h.player}}</span></span>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding-bottom: 46px;">
+<sc-if value="{{c.played}}" hint-placeholder-val="{{false}}">
+<span style="font-family: Furore, sans-serif; font-size: 34px; line-height: 1; white-space: nowrap; opacity: {{c.scoreOp}};"><span style="color: {{c.hsColor}};">{{c.hs}}</span><span style="color: #9E84AE;">–</span><span style="color: {{c.asColor}};">{{c.as}}</span></span>
+</sc-if>
+<sc-if value="{{c.unplayed}}" hint-placeholder-val="{{true}}">
+<span style="width: 46px; height: 46px; border-radius: 50%; background: #DED002; color: #1E0825; display: flex; align-items: center; justify-content: center; font-family: Furore, sans-serif; font-size: 16px;">VS</span>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; min-width: 0; opacity: {{c.aOp}};">
+<svg width="64" height="75" viewBox="0 0 72 84" aria-hidden="true"><path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{c.a.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path><path d="M36 2 68 12v8H4v-8z" fill="{{c.a.c2}}"></path><text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{c.a.ink}}">{{c.a.short}}</text></svg>
+<span style="font-family: Furore, sans-serif; font-size: 15px; line-height: 1.2; min-height: 36px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{c.a.team}}</span>
+<span style="display: flex; align-items: center; gap: 8px; max-width: 100%; font-size: 13px; color: #CBB8D9;"><span style="flex: none; width: 24px; height: 24px; border-radius: 50%; background: #4A1C58; border: 1px solid rgba(243,240,234,0.2);"></span><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.a.player}}</span></span>
+</div>
+</div>
+
+<div style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-top: 1px solid rgba(243,240,234,0.08); background: rgba(30,8,37,0.35);">
+<span style="font-size: 13px; color: #CBB8D9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.foot}}</span>
+<span style="flex: none; font-size: 13px; font-weight: 700; color: #DED002;">{{c.cta}} →</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = {
+      mun: { team: 'Manchester United', short: 'MUN', c1: '#DA291C', c2: '#FBE122', ink: '#FFFFFF' },
+      acm: { team: 'AC Milan', short: 'ACM', c1: '#C8102E', c2: '#111111', ink: '#FFFFFF' },
+      rma: { team: 'Real Madrid', short: 'RMA', c1: '#FFFFFF', c2: '#FEBE10', ink: '#1E0825' },
+      liv: { team: 'Liverpool', short: 'LIV', c1: '#C8102E', c2: '#00B2A9', ink: '#FFFFFF' },
+      bar: { team: 'Barcelona', short: 'BAR', c1: '#A50044', c2: '#004D98', ink: '#FFFFFF' },
+      ars: { team: 'Arsenal', short: 'ARS', c1: '#EF0107', c2: '#FFFFFF', ink: '#FFFFFF' },
+      fcb: { team: 'Bayern', short: 'FCB', c1: '#DC052D', c2: '#0066B2', ink: '#FFFFFF' },
+      juv: { team: 'Juventus', short: 'JUV', c1: '#111111', c2: '#FFFFFF', ink: '#FFFFFF' },
+      bmg: { team: 'Borussia Mönchengladbach', short: 'BMG', c1: '#111111', c2: '#00A651', ink: '#FFFFFF' },
+      psg: { team: 'Paris Saint-Germain', short: 'PSG', c1: '#004170', c2: '#DA291C', ink: '#FFFFFF' },
+      int: { team: 'Inter', short: 'INT', c1: '#0068A8', c2: '#111111', ink: '#FFFFFF' },
+      che: { team: 'Chelsea', short: 'CHE', c1: '#034694', c2: '#FFFFFF', ink: '#FFFFFF' },
+    };
+    const s = (k, player) => ({ ...T[k], player });
+    const MUTED = '#9E84AE', YELLOW = '#DED002', GREEN = '#34C659', PINK = '#E0689F';
+    const card = (o) => {
+      const played = o.hs != null;
+      const done = o.kind === 'done';
+      const hWin = done && o.hs > o.as, aWin = done && o.as > o.hs;
+      return {
+        border: o.kind === 'disputed' ? 'rgba(224,104,159,0.5)' : o.kind === 'pending' ? 'rgba(222,208,2,0.4)' : 'rgba(243,240,234,0.12)',
+        played, unplayed: !played,
+        hsColor: aWin ? MUTED : '#F3F0EA', asColor: hWin ? MUTED : '#F3F0EA',
+        scoreOp: done ? 1 : 0.7,
+        hOp: aWin ? 0.6 : 1, aOp: hWin ? 0.6 : 1,
+        ...o,
+      };
+    };
+    const cards = [
+      card({ label: 'MATCH 01', kind: 'scheduled', chip: 'To be played', chipColor: MUTED, h: s('mun', 'Adil Azeez'), a: s('acm', 'Abdul Khadar TC'), foot: 'Play by Sun, 23 Nov', cta: 'Details' }),
+      card({ label: 'MATCH 02', kind: 'pending', chip: 'Awaiting confirmation', chipColor: YELLOW, h: s('rma', 'Sameer'), a: s('liv', 'Faiz'), hs: 2, as: 1, foot: 'Score in · waiting for confirmation', cta: 'Details' }),
+      card({ label: 'MATCH 03', kind: 'done', chip: 'Full time', chipColor: GREEN, h: s('bar', 'Nikhil'), a: s('ars', 'Imran'), hs: 3, as: 1, foot: 'Confirmed by both', cta: 'Details' }),
+      card({ label: 'MATCH 04', kind: 'done', chip: 'Full time', chipColor: GREEN, h: s('fcb', 'Vivek'), a: s('juv', 'Kiran'), hs: 2, as: 2, foot: 'Honours even', cta: 'Details' }),
+      card({ label: 'MATCH 05', kind: 'disputed', chip: 'Disputed', chipColor: PINK, h: s('bmg', 'Muhammed Rashid Ali'), a: s('psg', 'Arjun'), hs: 1, as: 0, foot: 'Admin is reviewing the screenshots', cta: 'Details' }),
+      card({ label: 'MATCH 06', kind: 'done', chip: 'Forfeit', chipColor: MUTED, h: s('int', 'Jouhar'), a: s('che', 'Shahal'), hs: 3, as: 0, foot: 'Chelsea did not play by the deadline', cta: 'Details' }),
+    ];
+    return { cards };
+  }
+}
+</script>
+</body>
+</html>

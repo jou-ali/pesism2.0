@@ -124,6 +124,8 @@ public class FixtureAdminService {
             throw new IllegalArgumentException("This fixture is already on the schedule.");
         }
 
+        requireNoMatchdayConflict(tournament.getId(), stage, body.matchday(), body.homePlayerId(), body.awayPlayerId());
+
         FootballMatch match =
             FootballMatch.scheduled(
                 UUID.randomUUID(),
@@ -165,6 +167,32 @@ public class FixtureAdminService {
                 .collect(Collectors.toMap(Player::getId, Function.identity()));
 
         return matches.stream().map(m -> toAdminRow(m, playersById)).toList();
+    }
+
+    /** A matchday may not contain the same player twice (mirrors @tournax/core's findMatchdayConflict). */
+    private void requireNoMatchdayConflict(
+        UUID tournamentId,
+        MatchStage stage,
+        int matchdayNumber,
+        UUID homePlayerId,
+        UUID awayPlayerId
+    ) {
+        List<FootballMatch> sameMatchday =
+            footballMatchRepository.findAllByTournamentIdWithMatchday(tournamentId).stream()
+                .filter(m -> m.getStage() == stage)
+                .filter(m -> m.getMatchday() != null && m.getMatchday().getNumber() == matchdayNumber)
+                .toList();
+
+        UUID conflict = sameMatchday.stream()
+            .flatMap(m -> java.util.stream.Stream.of(m.getHomeId(), m.getAwayId()))
+            .filter(id -> id.equals(homePlayerId) || id.equals(awayPlayerId))
+            .findFirst()
+            .orElse(null);
+
+        if (conflict != null) {
+            String name = playerRepository.findById(conflict).map(Player::getName).orElse("That player");
+            throw new IllegalArgumentException(name + " is already scheduled to play on matchday " + matchdayNumber + ".");
+        }
     }
 
     private Matchday ensureMatchday(UUID tournamentId, int number) {

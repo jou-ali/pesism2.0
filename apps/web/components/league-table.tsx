@@ -5,8 +5,6 @@ import { TeamCrest } from './team-crest';
 export type PlayerCrestInfo = {
   teamName: string | null;
   crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
 };
 
 function MovementIcon({ movement }: { movement: Movement | undefined }) {
@@ -40,27 +38,32 @@ export function LeagueTable({
   playerNames,
   playerCrests,
   movement,
+  showGoals = true,
 }: {
   rows: StandingRow[];
   qualifiers: number;
   playerNames: Record<string, string>;
   playerCrests?: Record<string, PlayerCrestInfo>;
   movement?: Record<string, Movement> | null;
+  /** Goals for/against columns — the public site shows them; the admin table skips them to keep the card narrow. */
+  showGoals?: boolean;
 }) {
   const showDivider = rows.length > qualifiers;
 
   return (
-    <div className="ltable">
+    <div className={`ltable${showGoals ? '' : ' ltable--no-goals'}`}>
       <div className="ltable-header">
         <span>#</span>
         <span aria-hidden="true" />
         <span aria-hidden="true" />
         <span>Team</span>
-        <span>P</span>
-        <span className="ltable-head--w">W</span>
-        <span className="ltable-head--d">D</span>
-        <span className="ltable-head--l">L</span>
-        <span>GD</span>
+        <span className="ltable-head-center">P</span>
+        <span className="ltable-head-center ltable-head--w">W</span>
+        <span className="ltable-head-center ltable-head--d">D</span>
+        <span className="ltable-head-center ltable-head--l">L</span>
+        {showGoals ? <span className="ltable-head-center ltable-head--gf">GF</span> : null}
+        {showGoals ? <span className="ltable-head-center ltable-head--ga">GA</span> : null}
+        <span className="ltable-head-center">GD</span>
         <span>Pts</span>
       </div>
 
@@ -87,14 +90,7 @@ export function LeagueTable({
               <span className="ltable-move">
                 <MovementIcon movement={movement?.[row.playerId]} />
               </span>
-              <TeamCrest
-                teamName={teamName}
-                crestUrl={crest?.crestUrl}
-                primaryColor={crest?.primaryColor}
-                secondaryColor={crest?.secondaryColor}
-                size={40}
-                className="ltable-crest"
-              />
+              <TeamCrest teamName={teamName} crestUrl={crest?.crestUrl} size={40} className="ltable-crest" />
               <span className="ltable-team">
                 <span className="ltable-team__name">{teamName ?? playerNames[row.playerId] ?? row.playerId}</span>
                 {teamName ? <span className="ltable-team__player">{playerNames[row.playerId] ?? row.playerId}</span> : null}
@@ -103,6 +99,8 @@ export function LeagueTable({
               <span className="ltable-stat ltable-stat--w">{row.won}</span>
               <span className="ltable-stat ltable-stat--d">{row.drawn}</span>
               <span className="ltable-stat ltable-stat--l">{row.lost}</span>
+              {showGoals ? <span className="ltable-stat ltable-stat--gf">{row.goalsFor}</span> : null}
+              {showGoals ? <span className="ltable-stat ltable-stat--ga">{row.goalsAgainst}</span> : null}
               <span className="ltable-stat">
                 {row.goalDiff > 0 ? `+${row.goalDiff}` : row.goalDiff < 0 ? `−${Math.abs(row.goalDiff)}` : '0'}
               </span>

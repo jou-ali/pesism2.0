@@ -11,8 +11,8 @@ function d(ms: number): CSSProperties {
   return { '--d': `${ms}ms` } as CSSProperties;
 }
 
-export async function Hero() {
-  const window = await fetchRegistrationWindow();
+export async function Hero({ registrationOpen }: { registrationOpen: boolean }) {
+  const window = registrationOpen ? await fetchRegistrationWindow() : null;
   const spotsLabel = registrationSpotsLabel(window);
   const windowLine = registrationWindowSummary(window);
 
@@ -45,9 +45,11 @@ export async function Hero() {
               The banter&rsquo;s been loud all year. Now it gets settled. One league, one champion, and a group chat that never forgets.
             </p>
             <div className="hero__ctas" data-hero style={d(1200)}>
-              <Button className="btn btn--primary" type="button" data-open-register>
-                Claim your spot
-              </Button>
+              {registrationOpen ? (
+                <Button className="btn btn--primary" type="button" data-open-register>
+                  Claim your spot
+                </Button>
+              ) : null}
               <a className="btn--text" href="#standings">
                 See the table
               </a>
@@ -58,9 +60,9 @@ export async function Hero() {
           </div>
 
           <ul className="hero__facts" data-hero style={d(1300)}>
-            {spotsLabel ? <li>{spotsLabel}</li> : null}
+            {registrationOpen && spotsLabel ? <li>{spotsLabel}</li> : null}
             <li>Free entry</li>
-            {windowLine ? <li>{windowLine}</li> : null}
+            {registrationOpen && windowLine ? <li>{windowLine}</li> : null}
             <li>1 crown</li>
           </ul>
         </div>

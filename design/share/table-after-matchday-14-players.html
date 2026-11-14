@@ -1,0 +1,144 @@
+<!-- Design reference for the table-after-matchday-14-players share image (1080x1350). Exported from the TOURNAX Share Images design canvas.
+     /_blob/6ee48078... = apps/web/app/fonts/furore/Furore.otf ; /_blob/66412913... = apps/web/public/hero/trophy.png
+     Sample data only; 'PLAYER PHOTO' blocks are where the player's uploaded photo goes. Rebuild with next/og (flexbox only). -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Table after matchday, 14 players</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&amp;display=swap">
+<style>
+@font-face{font-family:"Furore";src:url(/_blob/6ee480781b6660a899e00b3ad8dfe437) format("opentype");font-display:block}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1080px; height: 1350px; box-sizing: border-box; overflow: hidden; background: #1E0825; color: #F3F0EA; font-family: Onest, sans-serif; padding: 64px 72px 56px; display: flex; flex-direction: column; gap: 40px;">
+
+<div aria-hidden="true" style="position: absolute; top: -260px; right: -220px; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(153,56,212,0.42) 0%, rgba(153,56,212,0.12) 45%, rgba(30,8,37,0) 70%);"></div>
+<div aria-hidden="true" style="position: absolute; bottom: -300px; left: -260px; width: 760px; height: 760px; border-radius: 50%; background: radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%);"></div>
+<img src="/_blob/66412913ef9dc238a66b81142f8d8e9a" alt="" aria-hidden="true" style="position: absolute; top: 70px; right: -40px; width: 360px; height: auto; opacity: 0.22;">
+
+<header style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: Furore, sans-serif; font-size: 40px; line-height: 1; letter-spacing: 0.02em;">TOURNAX</span>
+<span style="font-size: 18px; font-weight: 700; letter-spacing: 0.24em; color: #DED002;">PESISM 2.0</span>
+</div>
+<span style="background: #830D5C; color: #F3F0EA; font-size: 18px; font-weight: 700; letter-spacing: 0.16em; padding: 12px 22px; border-radius: 999px;">MATCHDAY 03 · DONE</span>
+</header>
+
+<section style="position: relative; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; align-items: flex-end; gap: 28px;"><span style="font-family: Furore, sans-serif; font-size: 112px; line-height: 0.9">THE<br>TABLE</span></div>
+<p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 600; color: #CBB8D9;">
+<span style="width: 12px; height: 12px; border-radius: 50%; background: #DED002;"></span>
+After matchday 03 · Numbers don’t do banter
+</p>
+</section>
+
+<section style="position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; background: #27092F; border: 1px solid rgba(243,240,234,0.12); border-radius: 24px; padding: 8px 24px 10px;">
+<div style="display: grid; grid-template-columns: 40px 20px 30px minmax(0, 1fr) repeat(5, 48px) 58px; align-items: center; gap: 10px; padding: 6px 8px 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.14em; color: #9E84AE; border-bottom: 1px solid rgba(243,240,234,0.12);">
+<span>#</span><span></span><span></span><span>TEAM · PLAYER</span>
+<span style="text-align: center;">P</span><span style="text-align: center;">W</span><span style="text-align: center;">D</span><span style="text-align: center;">L</span><span style="text-align: center;">GD</span><span style="text-align: right;">PTS</span>
+</div>
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="14">
+<sc-if value="{{r.cutBefore}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 14px; padding: 2px 8px;">
+<span style="flex: 1; height: 0; border-top: 2px dashed #DED002;"></span>
+<span style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; color: #DED002;">QUARTER-FINAL LINE</span>
+<span style="flex: 1; height: 0; border-top: 2px dashed #DED002;"></span>
+</div>
+</sc-if>
+<div style="{{r.rowStyle}}">
+<span style="font-family: Furore, sans-serif; font-size: 22px; color: {{r.posColor}};">{{r.pos}}</span>
+<span style="display: flex; align-items: center; justify-content: center;">
+<sc-if value="{{r.up}}" hint-placeholder-val="{{true}}"><svg width="14" height="12" viewBox="0 0 18 16" role="img" aria-label="Up"><path d="M9 1 17 15H1z" fill="#DED002"></path></svg></sc-if>
+<sc-if value="{{r.down}}" hint-placeholder-val="{{false}}"><svg width="14" height="12" viewBox="0 0 18 16" role="img" aria-label="Down"><path d="M9 15 1 1h16z" fill="#E0689F"></path></svg></sc-if>
+<sc-if value="{{r.same}}" hint-placeholder-val="{{false}}"><svg width="14" height="12" viewBox="0 0 18 16" role="img" aria-label="No change"><rect x="3" y="6.5" width="12" height="3" rx="1.5" fill="#9E84AE"></rect></svg></sc-if>
+</span>
+<svg width="30" height="35" viewBox="0 0 72 84" aria-hidden="true">
+<path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{r.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path>
+<path d="M36 2 68 12v8H4v-8z" fill="{{r.c2}}"></path>
+<text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{r.ink}}">{{r.short}}</text>
+</svg>
+<span style="display: flex; align-items: baseline; gap: 8px; min-width: 0; white-space: nowrap; overflow: hidden;">
+<span style="font-family: Furore, sans-serif; font-size: 18px; overflow: hidden; text-overflow: ellipsis;">{{r.team}}</span>
+<span style="font-size: 15px; font-weight: 500; color: #CBB8D9; flex: none;">· {{r.player}}</span>
+</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.p}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.w}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.d}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.l}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.gd}}</span>
+<span style="text-align: right; font-family: Furore, sans-serif; font-size: 26px; color: {{r.ptsColor}};">{{r.pts}}</span>
+</div>
+</sc-for>
+</section>
+
+<footer style="position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(243,240,234,0.12);">
+<p style="margin: 0; font-family: Furore, sans-serif; font-size: 26px; line-height: 1.15; max-width: 560px;">The group chat ends here.<br><span style="color: #DED002;">The pitch decides.</span></p>
+<span style="font-size: 20px; font-weight: 600; color: #9E84AE;">tournax.auradev.in</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1350}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = {
+      acm: { team: 'AC Milan', short: 'ACM', c1: '#C8102E', c2: '#111111', ink: '#FFFFFF' },
+      mun: { team: 'Man Utd', short: 'MUN', c1: '#DA291C', c2: '#FBE122', ink: '#FFFFFF' },
+      rma: { team: 'Real Madrid', short: 'RMA', c1: '#FFFFFF', c2: '#FEBE10', ink: '#1E0825' },
+      liv: { team: 'Liverpool', short: 'LIV', c1: '#C8102E', c2: '#00B2A9', ink: '#FFFFFF' },
+      bar: { team: 'Barcelona', short: 'BAR', c1: '#A50044', c2: '#004D98', ink: '#FFFFFF' },
+      ars: { team: 'Arsenal', short: 'ARS', c1: '#EF0107', c2: '#FFFFFF', ink: '#FFFFFF' },
+      fcb: { team: 'Bayern', short: 'FCB', c1: '#DC052D', c2: '#0066B2', ink: '#FFFFFF' },
+      juv: { team: 'Juventus', short: 'JUV', c1: '#111111', c2: '#FFFFFF', ink: '#FFFFFF' },
+      psg: { team: 'Paris SG', short: 'PSG', c1: '#004170', c2: '#DA291C', ink: '#FFFFFF' },
+      int: { team: 'Inter', short: 'INT', c1: '#0068A8', c2: '#111111', ink: '#FFFFFF' },
+      che: { team: 'Chelsea', short: 'CHE', c1: '#034694', c2: '#FFFFFF', ink: '#FFFFFF' },
+      atm: { team: 'Atlético Madrid', short: 'ATM', c1: '#CB3524', c2: '#272E61', ink: '#FFFFFF' },
+      bvb: { team: 'Dortmund', short: 'BVB', c1: '#FDE100', c2: '#111111', ink: '#111111' },
+      nap: { team: 'Napoli', short: 'NAP', c1: '#12A0D7', c2: '#003C82', ink: '#FFFFFF' },
+    };
+    const QUALIFY = 8;
+    const data = [
+      ['acm', 'Adhil', 3, 3, 0, 0, '+8', 9, 'up'],
+      ['che', 'Shahal', 3, 3, 0, 0, '+5', 9, 'up'],
+      ['mun', 'Rahul', 3, 2, 1, 0, '+4', 7, 'down'],
+      ['liv', 'Faiz', 3, 2, 0, 1, '+3', 6, 'same'],
+      ['bvb', 'Jamshid', 3, 2, 0, 1, '+1', 6, 'up'],
+      ['rma', 'Sameer', 3, 1, 2, 0, '+2', 5, 'down'],
+      ['bar', 'Nikhil', 3, 1, 1, 1, '+1', 4, 'up'],
+      ['atm', 'Sinan', 3, 1, 1, 1, '0', 4, 'down'],
+      ['fcb', 'Vivek', 3, 1, 0, 2, '−1', 3, 'same'],
+      ['nap', 'Khadar', 3, 0, 2, 1, '−2', 2, 'up'],
+      ['int', 'Jouhar', 3, 0, 1, 2, '−3', 1, 'down'],
+      ['ars', 'Imran', 3, 0, 1, 2, '−5', 1, 'down'],
+      ['juv', 'Kiran', 3, 0, 1, 2, '−6', 1, 'same'],
+      ['psg', 'Arjun', 3, 0, 0, 3, '−7', 0, 'down'],
+    ];
+    const base = 'display: grid; grid-template-columns: 40px 20px 30px minmax(0, 1fr) repeat(5, 48px) 58px; align-items: center; gap: 10px; padding: 3px 8px; border-radius: 12px; flex: 1;';
+    const rows = data.map((d, i) => {
+      const pos = i + 1;
+      const q = pos <= QUALIFY;
+      const leader = pos === 1;
+      return {
+        ...T[d[0]], player: d[1], p: d[2], w: d[3], d: d[4], l: d[5], gd: d[6], pts: d[7],
+        pos: String(pos).padStart(2, '0'),
+        up: d[8] === 'up', down: d[8] === 'down', same: d[8] === 'same',
+        cutBefore: pos === QUALIFY + 1,
+        posColor: q ? '#DED002' : '#9E84AE',
+        ptsColor: leader ? '#DED002' : '#F3F0EA',
+        rowStyle: base + (leader ? ' background: rgba(222,208,2,0.1); box-shadow: inset 0 0 0 1px rgba(222,208,2,0.35);' : '') + (q ? '' : ' opacity: 0.6;'),
+      };
+    });
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>

@@ -327,37 +327,18 @@ export async function listApprovedPlayersForAdmin(season = CURRENT_SEASON) {
   return rows.filter((r) => r.approved);
 }
 
-async function publicFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
-    cache: 'no-store',
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `API error ${res.status}`);
-  }
-  if (res.status === 204) {
-    return undefined as T;
-  }
-  return (await res.json()) as T;
-}
-
 export type TeamRow = {
   playerId: string;
   playerName: string;
+  avatarUrl: string | null;
   teamName: string | null;
   crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
   hasCrest: boolean;
 };
 
 export type UpdateTeamBody = {
   teamName?: string;
   crestUrl?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
 };
 
 export function listTeams(season = CURRENT_SEASON) {
@@ -368,36 +349,6 @@ export function updateTeam(playerId: string, body: UpdateTeamBody, season = CURR
   return adminFetch<TeamRow>(`/api/v1/admin/seasons/${season}/teams/${playerId}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
-  });
-}
-
-export type IssueSetupTokenResult = { token: string; expiresAt: string };
-
-export function issueTeamSetupLink(playerId: string, season = CURRENT_SEASON) {
-  return adminFetch<IssueSetupTokenResult>(`/api/v1/admin/seasons/${season}/teams/${playerId}/setup-link`, {
-    method: 'POST',
-  });
-}
-
-export type TeamSetupStatus = {
-  valid: boolean;
-  playerName: string | null;
-  avatarUrl: string | null;
-  teamName: string | null;
-  crestUrl: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
-  locked: boolean;
-};
-
-export function getTeamSetupStatus(token: string) {
-  return publicFetch<TeamSetupStatus>(`/api/v1/team-setup/${token}`);
-}
-
-export function completeTeamSetup(token: string, teamName: string) {
-  return publicFetch<void>(`/api/v1/team-setup/${token}`, {
-    method: 'POST',
-    body: JSON.stringify({ teamName }),
   });
 }
 

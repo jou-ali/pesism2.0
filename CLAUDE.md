@@ -46,12 +46,10 @@ Check `docs/roadmap.md`, work on the first unchecked phase, tick items as you fi
 - **Admins** can enter or override any result directly. Every admin change writes to `audit_log`.
 - **Identity** is the WhatsApp number (digits only). Never expose phone numbers publicly
   (use the `public_players` view).
-- **Teams**: the player picks their team name at registration (required, ≤30 chars); the admin
-  owns the crest and two team colours. The team name locks once the tournament leaves
-  `registration` — except admins, who can always override it. Players who registered before team
-  names existed get a one-time, 7-day "complete your team" link from the admin Teams panel. No
-  crest yet → a generated SVG shield from the team's colours + initials, so nothing ever looks
-  broken.
+- **Teams**: admin-only. Team name and crest are set and edited from Admin → Teams (`lib/crest.ts`
+  `updateTeam`/`uploadTeamCrest`) — there is no player-facing setup flow and no stored team
+  colours. No crest yet → a generated SVG shield whose initials and two-colour palette are derived
+  deterministically from a hash of the team name, so nothing ever looks broken.
 - Scores are reported sender first: `!r 3-1 @opp` means sender 3, opponent 1.
 
 ## Tech decisions

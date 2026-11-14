@@ -13,7 +13,7 @@ import {
 import { fetchSeasonCompetition, type SeasonPlayer, type KnockoutMatch } from '@/lib/season-competition';
 import { isCountedMatch } from '@/lib/matchday-status';
 import { initialsFor } from '@/lib/crest';
-import { inkFor } from './colors';
+import { formatMatchdayDeadline } from '@/lib/format-deadline';
 import type { Badge, ChaserRow, Fixture, Side, TableRowData, Tie } from './types';
 import * as sample from './sample-data';
 
@@ -25,14 +25,8 @@ function isUsableImage(url: string | null | undefined): url is string {
 
 function badgeFor(p: SeasonPlayer): Badge {
   const teamName = p.teamName ?? 'Team pending';
-  const primaryColor = p.primaryColor ?? '#DED002';
-  const secondaryColor = p.secondaryColor ?? '#9938D4';
   return {
     teamName,
-    short: initialsFor(teamName),
-    primaryColor,
-    secondaryColor,
-    ink: inkFor(primaryColor),
     crestUrl: isUsableImage(p.crestUrl) ? p.crestUrl : null,
   };
 }
@@ -45,30 +39,9 @@ export function posterVersion(payload: unknown): string {
   return createHash('sha256').update(JSON.stringify(payload)).digest('hex').slice(0, 12);
 }
 
-function ordinal(n: number): string {
-  const v = n % 100;
-  if (v >= 11 && v <= 13) return `${n}TH`;
-  switch (n % 10) {
-    case 1:
-      return `${n}ST`;
-    case 2:
-      return `${n}ND`;
-    case 3:
-      return `${n}RD`;
-    default:
-      return `${n}TH`;
-  }
-}
-
 function formatDeadline(iso: string | null): string {
   if (!iso) return '';
-  const d = new Date(iso);
-  const tz = 'Asia/Kolkata';
-  const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: tz }).format(d);
-  const day = new Intl.DateTimeFormat('en-US', { day: 'numeric', timeZone: tz }).format(d);
-  const month = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: tz }).format(d);
-  const time = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: tz }).format(d);
-  return `Play by ${weekday}, ${day} ${month} · ${time} IST`;
+  return `Deadline: ${formatMatchdayDeadline(iso)}`;
 }
 
 /** Standard single-elimination seeding: seed i plays seed (n+1-i) in the first round. */
@@ -107,13 +80,30 @@ export type MatchdayPreviewData = { matchday: number; deadline: string; fixtures
 
 export async function getMatchdayPreviewData(matchday: number, useSample: boolean): Promise<MatchdayPreviewData | null> {
   if (useSample) {
-    // Odd matchday numbers exercise the compact 6-7 fixture / bye-row path; even ones the ≤5 single-column path.
-    const compact = matchday % 2 === 1;
+    // Cycle the three real densities: 5 fixtures/no bye, 7 fixtures/no bye (14 players, even),
+    // 6 fixtures + bye (13 players, odd) — matchday % 3 picks between them.
+    const cycle = matchday % 3;
+    if (cycle === 1) {
+      return {
+        matchday,
+        deadline: 'Deadline: Sun, 23 Nov · 11:59 PM IST',
+        fixtures: sample.sampleFixtures7,
+        bye: null,
+      };
+    }
+    if (cycle === 2) {
+      return {
+        matchday,
+        deadline: 'Deadline: Sun, 23 Nov · 11:59 PM IST',
+        fixtures: sample.sampleFixtures6,
+        bye: sample.sampleBye,
+      };
+    }
     return {
       matchday,
-      deadline: 'Play by Sun, 23 Nov · 11:59 PM IST',
-      fixtures: compact ? sample.sampleFixtures7 : sample.sampleFixtures5,
-      bye: compact ? sample.sampleBye : null,
+      deadline: 'Deadline: Sun, 23 Nov · 11:59 PM IST',
+      fixtures: sample.sampleFixtures5,
+      bye: null,
     };
   }
   const comp = await loadCompetition();
@@ -181,7 +171,7 @@ export async function getMatchdayTableData(matchday: number, useSample: boolean)
         })()
       : null;
     return {
-      ...(player ? badgeFor(player) : { teamName: 'Team pending', short: '?', primaryColor: '#DED002', secondaryColor: '#9938D4', ink: '#1E0825' }),
+      ...(player ? badgeFor(player) : { teamName: 'Team pending' }),
       pos,
       player: player?.name ?? '—',
       played: row.played,
@@ -223,7 +213,7 @@ function tieFromMatch(m: KnockoutMatch, players: Map<PlayerId, SeasonPlayer>): T
 }
 
 export async function getQuarterFinalsData(useSample: boolean): Promise<KnockoutPreviewData | null> {
-  if (useSample) return { ties: sample.sampleQfTies, deadline: 'Win or go home · Play by Sun, 18 Jan · 11:59 PM IST' };
+  if (useSample) return { ties: sample.sampleQfTies, deadline: 'Win or go home · Deadline: Sun, 18 Jan · 11:59 PM IST' };
   const ctx = await knockoutContext();
   if (!ctx) return null;
   const { comp, positions, players } = ctx;
@@ -238,16 +228,15 @@ export async function getQuarterFinalsData(useSample: boolean): Promise<Knockout
       const posHome = positions.get(m.homeId) ?? 999;
       const posAway = positions.get(m.awayId) ?? 999;
       const slot = bracketSlotForSeed(Math.min(posHome, posAway), comp.knockoutQualifiers);
-      const seeds = `${ordinal(Math.min(posHome, posAway))} v ${ordinal(Math.max(posHome, posAway))}`;
-      return { slot, tie: { ...tie, label: `QF${slot}`, seeds } };
+      return { slot, tie: { ...tie, label: `QF${slot}` } };
     })
     .sort((a, b) => a.slot - b.slot);
 
-  return { ties: withSlot.map((x) => x.tie), deadline: 'Win or go home · Play by Sun, 18 Jan · 11:59 PM IST' };
+  return { ties: withSlot.map((x) => x.tie), deadline: 'Win or go home · Deadline: Sun, 18 Jan · 11:59 PM IST' };
 }
 
 export async function getSemiFinalsData(useSample: boolean): Promise<KnockoutPreviewData | null> {
-  if (useSample) return { ties: sample.sampleSfTies, deadline: 'Four left. Two make the final · Play by Sun, 25 Jan · 11:59 PM IST' };
+  if (useSample) return { ties: sample.sampleSfTies, deadline: 'Four left. Two make the final · Deadline: Sun, 25 Jan · 11:59 PM IST' };
   const ctx = await knockoutContext();
   if (!ctx) return null;
   const { comp, positions, players } = ctx;
@@ -270,7 +259,7 @@ export async function getSemiFinalsData(useSample: boolean): Promise<KnockoutPre
     .sort((a, b) => a.slot - b.slot)
     .map((x, i) => ({ ...x, tie: { ...x.tie, label: `SF${i + 1} · WINNER QF${x.qfLo} v WINNER QF${x.qfHi}` } }));
 
-  return { ties: withSlot.map((x) => x.tie), deadline: 'Four left. Two make the final · Play by Sun, 25 Jan · 11:59 PM IST' };
+  return { ties: withSlot.map((x) => x.tie), deadline: 'Four left. Two make the final · Deadline: Sun, 25 Jan · 11:59 PM IST' };
 }
 
 export type FinalPreviewData = { home: Side; away: Side; dateLine: string };
@@ -417,6 +406,7 @@ export type LeagueShieldData = {
   leader: Side;
   points: number;
   clearOfSecond: number;
+  pointsPerMatch: number;
   record: { won: number; drawn: number; lost: number };
   goalDiff: number;
   goalsScored: number;
@@ -440,10 +430,13 @@ export async function getLeagueShieldData(useSample: boolean): Promise<LeagueShi
     return { ...(p ? badgeFor(p) : sample.sampleLeagueShield.chasers[0]), pos: i + 2, player: p?.name ?? '—', value: String(row.points) };
   });
 
+  const played = leaderRow.won + leaderRow.drawn + leaderRow.lost;
+
   return {
     leader: sideFor(leader),
     points: leaderRow.points,
     clearOfSecond: leaderRow.points - (table[1]?.points ?? 0),
+    pointsPerMatch: played ? Number((leaderRow.points / played).toFixed(2)) : 0,
     record: { won: leaderRow.won, drawn: leaderRow.drawn, lost: leaderRow.lost },
     goalDiff: leaderRow.goalDiff,
     goalsScored: leaderRow.goalsFor,
@@ -502,6 +495,7 @@ export type GoldenGloveData = {
   leader: Side;
   conceded: number;
   matches: number;
+  wins: number;
   fewerThanSecond: number;
   concededPerMatch: number;
   cleanSheets: number;
@@ -547,6 +541,7 @@ export async function getGoldenGloveData(useSample: boolean): Promise<GoldenGlov
     leader: sideFor(leader),
     conceded: winnerRow.goalsAgainst,
     matches: winnerRow.played,
+    wins: winnerRow.won,
     fewerThanSecond: (second?.goalsAgainst ?? winnerRow.goalsAgainst) - winnerRow.goalsAgainst,
     concededPerMatch: winnerRow.played ? Number((winnerRow.goalsAgainst / winnerRow.played).toFixed(2)) : 0,
     cleanSheets: cleanSheetCount(winnerRow.playerId, comp.matches),

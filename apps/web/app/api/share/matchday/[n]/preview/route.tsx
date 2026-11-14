@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, FixtureCard, CompactFixtureCard } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, FixtureCard, CompactFixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getMatchdayPreviewData } from '@/lib/share/data';
 import type { Fixture } from '@/lib/share/types';
 
@@ -18,7 +18,7 @@ function ByeRow({ bye, compact }: { bye: NonNullable<Awaited<ReturnType<typeof g
         background: '#27092F',
         border: '1px solid rgba(243,240,234,0.12)',
         borderRadius: 24,
-        padding: compact ? '16px 24px' : '20px 24px',
+        padding: '16px 24px',
         flex: 1,
         width: '100%',
       }}
@@ -45,6 +45,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ n: strin
   const [fonts, trophy] = await Promise.all([loadShareFonts(), loadTrophyDataUri()]);
   const compact = data.fixtures.length >= 6;
   const mdStr = String(data.matchday).padStart(2, '0');
+  // Fixture card: padding '16px 24px', so 24px off each side of the poster's own content width.
+  const cardWidthPx = POSTER_CONTENT_WIDTH - 24 * 2;
 
   return new ImageResponse(
     (
@@ -62,73 +64,39 @@ export async function GET(req: Request, { params }: { params: Promise<{ n: strin
           <SubtitleLine>{data.deadline}</SubtitleLine>
         </div>
 
-        {compact ? (
-          (() => {
-            const callout = (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  gap: 10,
-                  flex: 1,
-                  border: '2px dashed rgba(222,208,2,0.55)',
-                  borderRadius: 24,
-                  padding: '16px 24px',
-                }}
-              >
-                <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: 2, color: '#DED002' }}>AFTER YOUR MATCH</span>
-                <span style={{ fontFamily: 'Furore', fontSize: 24, lineHeight: 1.15 }}>Post the score on tournax.auradev.in</span>
-                <span style={{ fontSize: 16, fontWeight: 500, color: '#CBB8D9' }}>Add the full-time screenshot. Both players confirm it.</span>
-              </div>
-            );
-            const cells: React.ReactNode[] = [
-              ...data.fixtures.map((f: Fixture, i: number) => <CompactFixtureCard key={`f${i}`} fixture={f} />),
-              ...(data.bye ? [<ByeRow key="bye" bye={data.bye} compact />] : []),
-              <div key="callout" style={{ display: 'flex', width: '100%' }}>
-                {callout}
-              </div>,
-            ];
-            const rows: React.ReactNode[][] = [];
-            for (let i = 0; i < cells.length; i += 2) rows.push(cells.slice(i, i + 2));
-
-            return (
-              <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                {rows.map((rowCells, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'row', flex: 1, gap: 14 }}>
-                    {rowCells.map((cell, j) => (
-                      <div key={j} style={{ display: 'flex', flex: 1 }}>
-                        {cell}
-                      </div>
-                    ))}
-                    {rowCells.length === 1 ? <div style={{ display: 'flex', flex: 1 }} /> : null}
-                  </div>
-                ))}
-              </div>
-            );
-          })()
-        ) : (
-          <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
-            {data.fixtures.map((f: Fixture, i: number) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flex: 1,
-                  alignItems: 'center',
-                  background: '#27092F',
-                  border: '1px solid rgba(243,240,234,0.12)',
-                  borderRadius: 24,
-                  padding: '20px 24px',
-                }}
-              >
-                <FixtureCard fixture={f} />
-              </div>
-            ))}
-            <ByeRow bye={data.bye} />
-          </div>
-        )}
+        <div
+          style={{
+            position: 'relative',
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: compact ? 12 : 16,
+            justifyContent: 'center',
+          }}
+        >
+          {data.fixtures.map((f: Fixture, i: number) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: 1,
+                alignItems: 'center',
+                background: '#27092F',
+                border: '1px solid rgba(243,240,234,0.12)',
+                borderRadius: 24,
+                padding: '16px 24px',
+              }}
+            >
+              {compact ? (
+                <CompactFixtureCard fixture={f} cardWidthPx={cardWidthPx} />
+              ) : (
+                <FixtureCard fixture={f} cardWidthPx={cardWidthPx} />
+              )}
+            </div>
+          ))}
+          <ByeRow bye={data.bye} compact={compact} />
+        </div>
       </PosterFrame>
     ),
     {

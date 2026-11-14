@@ -62,9 +62,7 @@ public class CompetitionService {
                     tp.getPlayer().getCity(),
                     tp.getPlayer().getAvatarUrl(),
                     tp.getTeamName(),
-                    tp.getCrestUrl(),
-                    tp.getPrimaryColor(),
-                    tp.getSecondaryColor()
+                    tp.getCrestUrl()
                 ))
                 .toList();
 
@@ -147,9 +145,7 @@ public class CompetitionService {
             name,
             avatarUrl,
             tp != null ? tp.getTeamName() : null,
-            tp != null ? tp.getCrestUrl() : null,
-            tp != null ? tp.getPrimaryColor() : null,
-            tp != null ? tp.getSecondaryColor() : null
+            tp != null ? tp.getCrestUrl() : null
         );
     }
 

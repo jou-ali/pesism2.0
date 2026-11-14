@@ -78,13 +78,7 @@ export async function PlayersCarousel() {
                           </h3>
                           <p className="player__tag">@{player.gamingUsername}</p>
                           <p className="player__tag" style={{ display: 'flex', alignItems: 'center', gap: '.4rem', color: 'var(--muted-foreground)' }}>
-                            <TeamCrest
-                              teamName={player.teamName}
-                              crestUrl={player.crestUrl}
-                              primaryColor={player.primaryColor}
-                              secondaryColor={player.secondaryColor}
-                              size={18}
-                            />
+                            <TeamCrest teamName={player.teamName} crestUrl={player.crestUrl} size={18} />
                             {player.teamName ?? 'Team pending'}
                           </p>
                         </div>

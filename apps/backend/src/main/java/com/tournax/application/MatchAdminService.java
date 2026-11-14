@@ -144,6 +144,25 @@ public class MatchAdminService {
         return getMatch(season, matchId);
     }
 
+    /**
+     * Removes a match entirely (not just its score) — for fixing a mis-scheduled pairing, e.g. the
+     * wrong player was picked when the fixture was created. Reschedule the correct pairing afterwards.
+     */
+    @Transactional
+    public void deleteMatch(int season, UUID matchId) {
+        Tournament tournament = requireSeason(season);
+        FootballMatch match =
+            footballMatchRepository
+                .findById(matchId)
+                .filter(m -> m.getTournamentId().equals(tournament.getId()))
+                .orElseThrow(() -> new IllegalArgumentException("Match not found"));
+        boolean hadStats = matchStatsRepository.existsById(matchId);
+
+        matchStatsRepository.deleteById(matchId);
+        footballMatchRepository.delete(match);
+        writeAudit("admin_delete_match", matchId, toAdminRow(match, Map.of(), hadStats), null);
+    }
+
     @Transactional
     public AdminMatchRow recordMatch(int season, RecordMatchRequest body) {
         if (body.homePlayerId().equals(body.awayPlayerId())) {

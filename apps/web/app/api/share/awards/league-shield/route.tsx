@@ -29,23 +29,39 @@ export async function GET(req: Request) {
           <AwardHeroPanel side={data.leader} tint="rgba(200,16,46,0.45)" />
 
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, background: '#DED002', color: '#1E0825', borderRadius: 24, padding: 24 }}>
-              <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2 }}>POINTS</span>
-              <span style={{ fontFamily: 'Furore', fontSize: 96, lineHeight: 0.95 }}>{data.points}</span>
-              <span style={{ fontSize: 18, fontWeight: 700 }}>{data.clearOfSecond} clear at the top</span>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch', gap: 24, background: '#DED002', color: '#1E0825', borderRadius: 24, padding: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2 }}>POINTS</span>
+                <span style={{ fontFamily: 'Furore', fontSize: 96, lineHeight: 0.95 }}>{data.points}</span>
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14, paddingLeft: 24, borderLeft: '2px solid rgba(30,8,37,0.18)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontFamily: 'Furore', fontSize: 34, lineHeight: 1 }}>+{data.clearOfSecond}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700 }}>clear of 2nd place</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontFamily: 'Furore', fontSize: 34, lineHeight: 1 }}>{data.pointsPerMatch.toFixed(2)}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700 }}>points per match</span>
+                </div>
+              </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="RECORD" value={`W${data.record.won} D${data.record.drawn} L${data.record.lost}`} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="RECORD" value={`W${data.record.won} D${data.record.drawn} L${data.record.lost}`} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  {/* Furore has no U+2212 glyph — ASCII hyphen here. */}
+                  <StatCard label="GOAL DIFF" value={data.goalDiff >= 0 ? `+${data.goalDiff}` : `-${Math.abs(data.goalDiff)}`} />
+                </div>
               </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="GOAL DIFF" value={data.goalDiff >= 0 ? `+${data.goalDiff}` : `−${Math.abs(data.goalDiff)}`} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="SCORED" value={String(data.goalsScored)} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="CONCEDED" value={String(data.goalsConceded)} />
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="SCORED" value={String(data.goalsScored)} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="CONCEDED" value={String(data.goalsConceded)} />
+                </div>
               </div>
             </div>
             <ChasingPackCard label="CHASING PACK" rows={data.chasers} />

@@ -12,6 +12,9 @@ export function AdminStandingsView({ competition }: { competition: SeasonCompeti
   const table = live ? computeStandings(playerIds, competition.matches, competition.points) : [];
   const scorers = live ? topScorers(playerIds, competition.matches) : [];
   const q = competition.knockoutQualifiers;
+  const playerCrests = Object.fromEntries(
+    competition.players.map((p) => [p.id, { teamName: p.teamName, crestUrl: p.crestUrl }]),
+  );
 
   return (
     <div className="admin-standings-grid">
@@ -22,7 +25,7 @@ export function AdminStandingsView({ competition }: { competition: SeasonCompeti
         <CardContent>
           {live ? (
             <div className="admin-table-wrap admin-table-wrap--standings">
-              <LeagueTable rows={table} qualifiers={q} playerNames={names} />
+              <LeagueTable rows={table} qualifiers={q} playerNames={names} playerCrests={playerCrests} showGoals={false} />
             </div>
           ) : (
             <CompetitionComingSoon label="Record a result under Results to populate the table." />

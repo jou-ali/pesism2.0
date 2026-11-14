@@ -39,13 +39,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '1.5rem', marginTop: '1rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', textAlign: 'center' }}>
-              <TeamCrest
-                teamName={match.home.teamName}
-                crestUrl={match.home.crestUrl}
-                primaryColor={match.home.primaryColor}
-                secondaryColor={match.home.secondaryColor}
-                size={88}
-              />
+              <TeamCrest teamName={match.home.teamName} crestUrl={match.home.crestUrl} size={88} />
               <strong>{match.home.teamName ?? 'Team pending'}</strong>
               <span className="player__tag">{match.home.playerName}</span>
             </div>
@@ -59,13 +53,7 @@ export default async function MatchDetailPage({ params }: { params: Promise<{ id
               )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', textAlign: 'center' }}>
-              <TeamCrest
-                teamName={match.away.teamName}
-                crestUrl={match.away.crestUrl}
-                primaryColor={match.away.primaryColor}
-                secondaryColor={match.away.secondaryColor}
-                size={88}
-              />
+              <TeamCrest teamName={match.away.teamName} crestUrl={match.away.crestUrl} size={88} />
               <strong>{match.away.teamName ?? 'Team pending'}</strong>
               <span className="player__tag">{match.away.playerName}</span>
             </div>

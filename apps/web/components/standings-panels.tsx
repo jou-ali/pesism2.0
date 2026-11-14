@@ -21,7 +21,7 @@ export function StandingsPanels({ competition, scorersLimit, showFootLink = fals
   const playerCrests = Object.fromEntries(
     (competition?.players ?? []).map((p) => [
       p.id,
-      { teamName: p.teamName, crestUrl: p.crestUrl, primaryColor: p.primaryColor, secondaryColor: p.secondaryColor },
+      { teamName: p.teamName, crestUrl: p.crestUrl },
     ]),
   );
 

@@ -64,7 +64,7 @@ docs/           roadmap.md (phases/checklist), whatsapp-bot.md (bot command spec
 | Shared logic | `packages/core`, plain TypeScript | `node:test` via `tsx`, no framework |
 | Hosting | Vercel (web), Railway (backend), Supabase (db) | |
 
-## Data model (`apps/backend/src/main/resources/db/migration`, Flyway `V1`...`V15`)
+## Data model (`apps/backend/src/main/resources/db/migration`, Flyway `V1`...`V16`)
 
 ```
 players              — one row per person (identity = email + WhatsApp number); gaming username,
@@ -72,10 +72,7 @@ players              — one row per person (identity = email + WhatsApp number)
 tournaments           — a season; status (draft/registration/league/knockout/finished), points
                         rule, knockout_qualifiers, registration window, current_matchday
 tournament_players    — join table; pending → approved per tournament; also owns the team identity:
-                        team_name, crest_url, primary_color, secondary_color
-team_setup_tokens     — one-time, expiring links an admin issues so a player (registered before
-                        team names existed) can set theirs — only while the tournament is still
-                        in `registration`
+                        team_name, crest_url — admin-managed only, see Teams below
 matchdays             — groups matches into rounds; stage (league/quarter_final/semi_final/
                         third_place/grand_final); opens_at/deadline_at once started
 matches               — homeId/awayId, stage, scores, status
@@ -105,8 +102,9 @@ league-stage matches (knockout-stage matches are excluded before they ever reach
 
 - **Pages** (all in `app/(site)/`): `/` (landing, phase-aware section after the hero), `/table`
   (standings + top scorers), `/fixtures` (matchday-by-matchday schedule and scores), `/matches/[id]`
-  (a single match's crests/score/stats), `/players/[id]` (profile + match history), `/team-setup/[token]`
-  (the one-time team-name-setup link a player opens), `/rules`, `/grievances`.
+  (a single match's crests/score/stats), `/players/[id]` (profile + match history), `/rules`,
+  `/grievances`. Team names and crests are set only from Admin → Teams; there is no player-facing
+  team setup page.
 - **Data**: every page fetches from the Spring Boot API via `lib/season-competition.ts`
   (`fetchSeasonCompetition`, `fetchMatchDetail`) and `lib/registration-window.ts` — no local seed
   data in production. `computeStandings`/`topScorers` run over whatever `matches` come back, so the
@@ -140,7 +138,8 @@ league-stage matches (knockout-stage matches are excluded before they ever reach
   reusable `<symbol>`s (including the emblem mark used as the wordmark and the loader mark); the
   hero's trophy is a plain `next/image` (`public/hero/trophy.png`), not an SVG symbol; one-off
   icons are inline path strings via the `Icon` component. Crests without an uploaded image fall
-  back to a generated SVG shield (`lib/crest.ts`) from the team's own colours + initials.
+  back to a generated SVG shield (`lib/crest.ts`) — initials plus a two-colour palette, both
+  derived deterministically from a hash of the team name (no colours are ever stored).
 - **Admin console** (`app/admin/`): a separate design surface from the public site — shadcn/ui +
   Tailwind, Onest body font (vs. the public site's Helvetica-family stack) — password-gated via a
   signed session cookie, calling the Spring Boot admin endpoints through `lib/tournax-api.ts` and

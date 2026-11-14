@@ -5,9 +5,8 @@ import java.util.UUID;
 public record TeamRow(
     UUID playerId,
     String playerName,
+    String avatarUrl,
     String teamName,
     String crestUrl,
-    String primaryColor,
-    String secondaryColor,
     boolean hasCrest
 ) {}

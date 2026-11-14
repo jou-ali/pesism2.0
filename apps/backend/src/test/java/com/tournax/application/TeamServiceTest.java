@@ -6,23 +6,16 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tournax.application.dto.CompleteTeamSetupRequest;
 import com.tournax.application.dto.TeamRow;
-import com.tournax.application.dto.TeamSetupStatusResponse;
 import com.tournax.application.dto.UpdateTeamRequest;
 import com.tournax.domain.model.Player;
-import com.tournax.domain.model.TeamSetupToken;
 import com.tournax.domain.model.Tournament;
 import com.tournax.domain.model.TournamentPlayer;
 import com.tournax.domain.model.TournamentPlayerId;
 import com.tournax.domain.model.TournamentStatus;
 import com.tournax.domain.repository.AuditLogRepository;
-import com.tournax.domain.repository.TeamSetupTokenRepository;
 import com.tournax.domain.repository.TournamentPlayerRepository;
 import com.tournax.domain.repository.TournamentRepository;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,12 +34,7 @@ class TeamServiceTest {
     TournamentPlayerRepository tournamentPlayerRepository;
 
     @Mock
-    TeamSetupTokenRepository teamSetupTokenRepository;
-
-    @Mock
     AuditLogRepository auditLogRepository;
-
-    private final Clock clock = Clock.fixed(Instant.parse("2026-11-01T12:00:00Z"), ZoneOffset.UTC);
 
     private TeamService teamService;
     private Tournament tournament;
@@ -59,10 +47,8 @@ class TeamServiceTest {
             new TeamService(
                 tournamentRepository,
                 tournamentPlayerRepository,
-                teamSetupTokenRepository,
                 auditLogRepository,
-                new ObjectMapper().registerModule(new JavaTimeModule()),
-                clock
+                new ObjectMapper().registerModule(new JavaTimeModule())
             );
         tournamentId = UUID.fromString("a0000000-0000-4000-8000-000000000003");
         playerId = UUID.randomUUID();
@@ -80,58 +66,35 @@ class TeamServiceTest {
         when(tournamentPlayerRepository.findById(new TournamentPlayerId(tournamentId, playerId)))
             .thenReturn(Optional.of(entry));
 
-        TeamRow row = teamService.updateTeam(3, playerId, new UpdateTeamRequest("New Name", null, null, null));
+        TeamRow row = teamService.updateTeam(3, playerId, new UpdateTeamRequest("New Name", null));
 
         assertEquals("New Name", row.teamName());
     }
 
     @Test
-    void completeSetupRejectsOutsideRegistration() {
-        setField(tournament, "status", TournamentStatus.league);
-        TeamSetupToken token = TeamSetupToken.issue("tok", tournamentId, playerId, clock.instant().plusSeconds(60));
-        when(teamSetupTokenRepository.findById("tok")).thenReturn(Optional.of(token));
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(tournament));
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> teamService.completeSetup("tok", new CompleteTeamSetupRequest("Shadow FC"))
-        );
-    }
-
-    @Test
-    void completeSetupRejectsExpiredToken() {
-        TeamSetupToken token = TeamSetupToken.issue("tok", tournamentId, playerId, clock.instant().minusSeconds(60));
-        when(teamSetupTokenRepository.findById("tok")).thenReturn(Optional.of(token));
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> teamService.completeSetup("tok", new CompleteTeamSetupRequest("Shadow FC"))
-        );
-    }
-
-    @Test
-    void completeSetupSetsTeamNameAndMarksTokenUsed() {
-        TeamSetupToken token = TeamSetupToken.issue("tok", tournamentId, playerId, clock.instant().plusSeconds(60));
-        when(teamSetupTokenRepository.findById("tok")).thenReturn(Optional.of(token));
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(tournament));
+    void updateTeamRejectsBlankName() {
+        when(tournamentRepository.findFirstBySeasonOrderByCreatedAtDesc(3)).thenReturn(Optional.of(tournament));
         TournamentPlayer entry = tournamentPlayer();
         when(tournamentPlayerRepository.findById(new TournamentPlayerId(tournamentId, playerId)))
             .thenReturn(Optional.of(entry));
 
-        teamService.completeSetup("tok", new CompleteTeamSetupRequest("Shadow FC"));
-
-        assertEquals("Shadow FC", entry.getTeamName());
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> teamService.updateTeam(3, playerId, new UpdateTeamRequest("   ", null))
+        );
     }
 
     @Test
-    void setupStatusReportsInvalidForUsedToken() {
-        TeamSetupToken token = TeamSetupToken.issue("tok", tournamentId, playerId, clock.instant().plusSeconds(60));
-        token.markUsed(clock.instant());
-        when(teamSetupTokenRepository.findById("tok")).thenReturn(Optional.of(token));
+    void updateTeamSavesCrestUrl() {
+        when(tournamentRepository.findFirstBySeasonOrderByCreatedAtDesc(3)).thenReturn(Optional.of(tournament));
+        TournamentPlayer entry = tournamentPlayer();
+        when(tournamentPlayerRepository.findById(new TournamentPlayerId(tournamentId, playerId)))
+            .thenReturn(Optional.of(entry));
 
-        TeamSetupStatusResponse status = teamService.setupStatus("tok");
+        TeamRow row = teamService.updateTeam(3, playerId, new UpdateTeamRequest(null, "https://x/crest.png"));
 
-        assertEquals(false, status.valid());
+        assertEquals("https://x/crest.png", row.crestUrl());
+        assertEquals(true, row.hasCrest());
     }
 
     private TournamentPlayer tournamentPlayer() {

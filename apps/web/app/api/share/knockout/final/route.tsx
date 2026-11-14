@@ -1,10 +1,15 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, Shield, Chip } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, Shield, Chip, FitTeamName, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getFinalPreviewData } from '@/lib/share/data';
+import { fallbackPaletteFor } from '@/lib/crest';
 import type { Side } from '@/lib/share/types';
 
 export const runtime = 'nodejs';
+
+// Trophy column is 200 fixed; the two panels split the rest evenly, each with 24px padding,
+// a 56px crest and a 16px gap before the text column starts.
+const PANEL_TEXT_WIDTH_PX = (POSTER_CONTENT_WIDTH - 200) / 2 - 24 * 2 - 56 - 16;
 
 function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace('#', '');
@@ -14,17 +19,9 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 function FinalPanel({ side, align }: { side: Side; align: 'left' | 'right' }) {
-  const tint = hexToRgba(side.primaryColor, align === 'left' ? 0.45 : 0.4);
+  const [primaryColor] = fallbackPaletteFor(side.teamName);
+  const tint = hexToRgba(primaryColor, align === 'left' ? 0.45 : 0.4);
   const radius = align === 'left' ? '24px 0 0 24px' : '0 24px 24px 0';
-  const row = (
-    <>
-      <Shield size={56} short={side.short} c1={side.primaryColor} c2={side.secondaryColor} ink={side.ink} crestUrl={side.crestUrl} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
-        <span style={{ fontFamily: 'Furore', fontSize: 30, lineHeight: 1 }}>{side.teamName}</span>
-        <span style={{ fontSize: 20, fontWeight: 600, color: '#CBB8D9' }}>{side.playerName}</span>
-      </div>
-    </>
-  );
   return (
     <div
       style={{
@@ -73,7 +70,11 @@ function FinalPanel({ side, align }: { side: Side; align: 'left' | 'right' }) {
           background: 'linear-gradient(180deg, rgba(30,8,37,0) 0%, rgba(30,8,37,0.85) 40%)',
         }}
       >
-        {row}
+        <Shield size={56} teamName={side.teamName} crestUrl={side.crestUrl} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+          <FitTeamName text={side.teamName} maxWidthPx={PANEL_TEXT_WIDTH_PX} max={26} min={18} align={align} lineHeight={1} />
+          <span style={{ fontSize: 20, fontWeight: 600, color: '#CBB8D9' }}>{side.playerName}</span>
+        </div>
       </div>
     </div>
   );
@@ -116,7 +117,7 @@ export async function GET(req: Request) {
             }}
           >
             <img src={trophy} width={170} />
-            <Chip text="VS" shape="circle" size={84} fontSize={30} fontFamily="Furore" />
+            <Chip text="VS" shape="circle" size={84} fontSize={30} fontFamily="Furore" bg="#DED002" color="#1E0825" />
           </div>
           <FinalPanel side={data.away} align="right" />
         </div>

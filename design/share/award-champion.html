@@ -1,0 +1,94 @@
+<!-- Design reference for the award-champion share image (1080x1350). Exported from the TOURNAX Share Images design canvas.
+     /_blob/6ee48078... = apps/web/app/fonts/furore/Furore.otf ; /_blob/66412913... = apps/web/public/hero/trophy.png
+     Sample data only; 'PLAYER PHOTO' blocks are where the player's uploaded photo goes. Rebuild with next/og (flexbox only). -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Champion</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&amp;display=swap">
+<style>
+@font-face{font-family:"Furore";src:url(/_blob/6ee480781b6660a899e00b3ad8dfe437) format("opentype");font-display:block}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1080px; height: 1350px; box-sizing: border-box; overflow: hidden; background: #1E0825; color: #F3F0EA; font-family: Onest, sans-serif; padding: 64px 72px 56px; display: flex; flex-direction: column; gap: 40px;">
+
+<div aria-hidden="true" style="position: absolute; top: -260px; right: -220px; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(245,185,59,0.35) 0%, rgba(153,56,212,0.15) 45%, rgba(30,8,37,0) 70%);"></div>
+<div aria-hidden="true" style="position: absolute; bottom: -300px; left: -260px; width: 760px; height: 760px; border-radius: 50%; background: radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%);"></div>
+
+<header style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: Furore, sans-serif; font-size: 40px; line-height: 1; letter-spacing: 0.02em;">TOURNAX</span>
+<span style="font-size: 18px; font-weight: 700; letter-spacing: 0.24em; color: #DED002;">PESISM 2.0</span>
+</div>
+<span style="background: #830D5C; color: #F3F0EA; font-size: 18px; font-weight: 700; letter-spacing: 0.16em; padding: 12px 22px; border-radius: 999px;">FULL TIME · SEASON OVER</span>
+</header>
+
+<section style="position: relative; display: flex; flex-direction: column; gap: 16px;">
+<span style="font-family: Furore, sans-serif; font-size: 112px; line-height: 0.9;">THE<br><span style="color: #DED002;">CHAMPION</span></span>
+<p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 600; color: #CBB8D9;">
+<span style="width: 12px; height: 12px; border-radius: 50%; background: #DED002;"></span>
+Talk is over. Bow down.
+</p>
+</section>
+
+<section style="position: relative; flex: 1; display: flex; gap: 16px; min-height: 0;">
+
+<div style="position: relative; flex: 1.15; border-radius: 24px; overflow: hidden; background: linear-gradient(160deg, #341040 0%, #27092F 50%, rgba(0,178,169,0.4) 100%); border: 1px solid rgba(245,185,59,0.45); display: flex; flex-direction: column; justify-content: flex-end;">
+<svg width="100%" height="78%" viewBox="0 0 200 180" preserveAspectRatio="xMidYMax meet" aria-hidden="true" style="position: absolute; bottom: 0; left: 0;"><circle cx="100" cy="58" r="38" fill="#4A1C58"></circle><path d="M14 180c6-54 40-82 86-82s80 28 86 82z" fill="#4A1C58"></path></svg>
+<span style="position: absolute; top: 24px; left: 24px; font-size: 12px; font-weight: 800; letter-spacing: 0.16em; color: #9E84AE;">PLAYER PHOTO</span>
+<span style="position: absolute; top: 18px; right: 18px; background: #DED002; color: #1E0825; font-size: 14px; font-weight: 800; letter-spacing: 0.16em; padding: 8px 16px; border-radius: 999px;">CHAMPION</span>
+<div style="position: relative; display: flex; align-items: center; gap: 20px; padding: 24px; background: linear-gradient(180deg, rgba(30,8,37,0) 0%, rgba(30,8,37,0.9) 45%);">
+<svg width="72" height="84" viewBox="0 0 72 84" aria-hidden="true" style="flex: none;">
+<path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="#C8102E" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path>
+<path d="M36 2 68 12v8H4v-8z" fill="#00B2A9"></path>
+<text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="#FFFFFF">LIV</text>
+</svg>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: Furore, sans-serif; font-size: 56px; line-height: 0.95;">FAIZ</span>
+<span style="font-size: 22px; font-weight: 600; color: #CBB8D9;">Liverpool</span>
+</div>
+</div>
+</div>
+
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+<div style="position: relative; flex: 1; border-radius: 24px; overflow: hidden; background: radial-gradient(circle at 50% 60%, rgba(245,185,59,0.35) 0%, rgba(245,185,59,0.08) 45%, #27092F 75%); border: 1px solid rgba(245,185,59,0.45);">
+<img src="/_blob/66412913ef9dc238a66b81142f8d8e9a" alt="The TOURNAX trophy" style="position: absolute; top: 24px; bottom: 24px; left: 50%; transform: translateX(-50%); height: calc(100% - 48px); width: auto; filter: drop-shadow(0 0 40px rgba(245,185,59,0.55));">
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; background: #DED002; color: #1E0825; border-radius: 24px; padding: 24px;">
+<span style="font-size: 15px; font-weight: 800; letter-spacing: 0.16em;">THE FINAL</span>
+<span style="font-family: Furore, sans-serif; font-size: 30px; line-height: 1.1;">Beat AC Milan 2–1</span>
+</div>
+<div style="display: flex; flex-direction: column; background: #27092F; border: 1px solid rgba(243,240,234,0.12); border-radius: 24px; padding: 8px 24px;">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(243,240,234,0.12);">
+<span style="font-size: 15px; font-weight: 800; letter-spacing: 0.16em; color: #9E84AE;">RECORD</span>
+<span style="font-family: Furore, sans-serif; font-size: 26px;">W12 D3 L1</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 0;">
+<span style="font-size: 15px; font-weight: 800; letter-spacing: 0.16em; color: #9E84AE;">GOALS</span>
+<span style="font-family: Furore, sans-serif; font-size: 26px;">41 scored</span>
+</div>
+</div>
+</div>
+
+</section>
+
+<footer style="position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(243,240,234,0.12);">
+<p style="margin: 0; font-family: Furore, sans-serif; font-size: 26px; line-height: 1.15; max-width: 560px;">The group chat ends here.<br><span style="color: #DED002;">The pitch decides.</span></p>
+<span style="font-size: 20px; font-weight: 600; color: #9E84AE;">tournax.auradev.in</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1350}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

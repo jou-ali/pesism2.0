@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, FixtureCard } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, FixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getQuarterFinalsData } from '@/lib/share/data';
 
 export const runtime = 'nodejs';
@@ -13,6 +13,8 @@ export async function GET(req: Request) {
   if (!data) return new Response('Not found', { status: 404 });
 
   const [fonts, trophy] = await Promise.all([loadShareFonts(), loadTrophyDataUri()]);
+  // Tie card: padding 24, so 24px off each side of the poster's own content width.
+  const cardWidthPx = POSTER_CONTENT_WIDTH - 24 * 2;
 
   return new ImageResponse(
     (
@@ -41,11 +43,8 @@ export async function GET(req: Request) {
                 padding: 24,
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 3, color: '#9E84AE' }}>{tie.label}</span>
-                <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2, color: '#DED002' }}>{tie.seeds}</span>
-              </div>
-              <FixtureCard fixture={tie} vsSize={68} />
+              <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 3, color: '#9E84AE' }}>{tie.label}</span>
+              <FixtureCard fixture={tie} cardWidthPx={cardWidthPx} vsSize={68} />
             </div>
           ))}
         </div>

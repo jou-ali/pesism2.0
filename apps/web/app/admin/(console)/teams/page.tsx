@@ -16,7 +16,7 @@ export default async function AdminTeamsPage() {
 
   return (
     <>
-      <AdminPageHead eyebrow="Teams" title="Crests & colours" />
+      <AdminPageHead eyebrow="Teams" title="Team names & crests" />
 
       {error ? <AdminApiStatus error={error} /> : <AdminTeamsPanel rows={rows} />}
     </>

@@ -1,0 +1,125 @@
+<!-- Design reference for the website LeagueTable card (apps/web/components/league-table.tsx). Same row design as the "table after matchday" poster (design/share/table-after-matchday.html). Exported from the TOURNAX design canvas.
+     /_blob/6ee48078... = apps/web/app/fonts/furore/Furore.otf. Sample data only. Build with the site CSS tokens, not inline styles. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Website league table card</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&amp;display=swap">
+<style>
+@font-face{font-family:"Furore";src:url(/_blob/6ee480781b6660a899e00b3ad8dfe437) format("opentype");font-display:block}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 1000px; box-sizing: border-box; background: #1E0825; color: #F3F0EA; font-family: Onest, sans-serif; padding: 56px 48px;">
+
+<div style="display: flex; flex-direction: column; border-radius: 24px; overflow: hidden; background: #27092F; border: 1px solid rgba(243,240,234,0.12);">
+
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid rgba(243,240,234,0.08);">
+<div style="display: flex; align-items: baseline; gap: 16px;">
+<span style="font-family: Furore, sans-serif; font-size: 24px; line-height: 1;">League table</span>
+<span style="font-size: 12px; font-weight: 800; letter-spacing: 0.16em; color: #9E84AE;">AFTER MATCHDAY 01</span>
+</div>
+<span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; border: 1px solid #34C659; color: #34C659;"><span style="width: 7px; height: 7px; border-radius: 50%; background: #34C659;"></span>Live</span>
+</div>
+
+<div style="display: flex; flex-direction: column; padding: 8px 16px 12px;">
+<div style="display: grid; grid-template-columns: 44px 24px 40px minmax(0, 1fr) repeat(5, 56px) 64px; align-items: center; gap: 8px; padding: 12px 12px 10px; margin-bottom: 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; color: #9E84AE; border-bottom: 1px solid rgba(243,240,234,0.12);">
+<span>#</span><span></span><span></span><span>TEAM</span>
+<span style="text-align: center;">P</span><span style="text-align: center;">W</span><span style="text-align: center;">D</span><span style="text-align: center;">L</span><span style="text-align: center;">GD</span><span style="text-align: right;">PTS</span>
+</div>
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+<sc-if value="{{r.cutBefore}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; align-items: center; gap: 14px; padding: 8px 12px;">
+<span style="flex: 1; border-top: 2px dashed rgba(222,208,2,0.6);"></span>
+<span style="font-size: 11px; font-weight: 800; letter-spacing: 0.18em; color: #DED002;">QUARTER-FINAL LINE</span>
+<span style="flex: 1; border-top: 2px dashed rgba(222,208,2,0.6);"></span>
+</div>
+</sc-if>
+<div style="{{r.rowStyle}}">
+<span style="font-family: Furore, sans-serif; font-size: 24px; color: {{r.posColor}};">{{r.pos}}</span>
+<span style="display: flex; justify-content: center;">
+<sc-if value="{{r.up}}" hint-placeholder-val="{{true}}"><svg width="16" height="14" viewBox="0 0 18 16" aria-label="Up"><path d="M9 1 17 15H1z" fill="#DED002"></path></svg></sc-if>
+<sc-if value="{{r.down}}" hint-placeholder-val="{{false}}"><svg width="16" height="14" viewBox="0 0 18 16" aria-label="Down"><path d="M9 15 1 1h16z" fill="#E0689F"></path></svg></sc-if>
+<sc-if value="{{r.same}}" hint-placeholder-val="{{false}}"><svg width="16" height="14" viewBox="0 0 18 16" aria-label="No change"><rect x="3" y="6.5" width="12" height="3" rx="1.5" fill="#9E84AE"></rect></svg></sc-if>
+</span>
+<svg width="40" height="46" viewBox="0 0 72 84" aria-hidden="true"><path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{r.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path><path d="M36 2 68 12v8H4v-8z" fill="{{r.c2}}"></path><text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{r.ink}}">{{r.short}}</text></svg>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+<span style="font-family: Furore, sans-serif; font-size: 19px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{r.team}}</span>
+<span style="font-size: 15px; font-weight: 500; color: #CBB8D9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{r.player}}</span>
+</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.p}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.w}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.d}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.l}}</span>
+<span style="text-align: center; font-size: 19px; font-weight: 600; color: #CBB8D9;">{{r.gd}}</span>
+<span style="text-align: right; font-family: Furore, sans-serif; font-size: 28px; color: {{r.ptsColor}};">{{r.pts}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid rgba(243,240,234,0.08); background: rgba(30,8,37,0.35);">
+<span style="font-size: 13px; color: #CBB8D9;">Top 8 make the quarter-finals</span>
+<span style="font-size: 13px; font-weight: 700; color: #DED002;">See the full table →</span>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = {
+      acm: { team: 'AC Milan', short: 'ACM', c1: '#C8102E', c2: '#111111', ink: '#FFFFFF' },
+      int: { team: 'Inter', short: 'INT', c1: '#0068A8', c2: '#111111', ink: '#FFFFFF' },
+      che: { team: 'Chelsea', short: 'CHE', c1: '#034694', c2: '#FFFFFF', ink: '#FFFFFF' },
+      mun: { team: 'Manchester United', short: 'MUN', c1: '#DA291C', c2: '#FBE122', ink: '#FFFFFF' },
+      bvb: { team: 'Borussia Dortmund', short: 'BVB', c1: '#FDE100', c2: '#111111', ink: '#111111' },
+      rma: { team: 'Real Madrid', short: 'RMA', c1: '#FFFFFF', c2: '#FEBE10', ink: '#1E0825' },
+      bar: { team: 'Barcelona', short: 'BAR', c1: '#A50044', c2: '#004D98', ink: '#FFFFFF' },
+      atm: { team: 'Atlético Madrid', short: 'ATM', c1: '#CB3524', c2: '#272E61', ink: '#FFFFFF' },
+      liv: { team: 'Liverpool', short: 'LIV', c1: '#C8102E', c2: '#00B2A9', ink: '#FFFFFF' },
+      psg: { team: 'Paris Saint-Germain', short: 'PSG', c1: '#004170', c2: '#DA291C', ink: '#FFFFFF' },
+    };
+    const QUALIFY = 8;
+    const data = [
+      ['acm', 'Adhil Kv', 4, 3, 1, 0, 7, 10, 'WWDW', 'up'],
+      ['int', 'Jouhar Ali K V', 4, 3, 0, 1, 4, 9, 'WLWW', 'up'],
+      ['che', 'Shahal', 4, 2, 1, 1, 3, 7, 'DWWL', 'down'],
+      ['mun', 'Adil Azeez', 4, 2, 0, 2, 1, 6, 'LWWL', 'same'],
+      ['bvb', 'Jamshid Jaleel', 4, 1, 2, 1, 0, 5, 'DDWL', 'up'],
+      ['rma', 'Abdul Khadar TC', 4, 1, 1, 2, -1, 4, 'WLDL', 'down'],
+      ['bar', 'Muhammed Athil', 4, 1, 1, 2, -2, 4, 'LDWL', 'same'],
+      ['atm', 'Sinannisar', 4, 1, 0, 3, -3, 3, 'LLWL', 'up'],
+      ['liv', 'Faiz', 4, 0, 2, 2, -4, 2, 'DLDL', 'down'],
+      ['psg', 'Arjun', 4, 0, 2, 2, -5, 2, 'LDLD', 'down'],
+    ];
+    const F = { W: { bg: '#DED002', fg: '#1E0825' }, D: { bg: '#4A1C58', fg: '#CBB8D9' }, L: { bg: '#E0689F', fg: '#1E0825' } };
+    const base = 'display: grid; grid-template-columns: 44px 24px 40px minmax(0, 1fr) repeat(5, 56px) 64px; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 14px;';
+    const rows = data.map((d, i) => {
+      const pos = i + 1, q = pos <= QUALIFY, leader = pos === 1;
+      const gd = d[6];
+      return {
+        ...T[d[0]], player: d[1], p: d[2], w: d[3], d: d[4], l: d[5], pts: d[7],
+        gd: gd > 0 ? '+' + gd : gd < 0 ? '−' + Math.abs(gd) : '0',
+        gdColor: gd > 0 ? '#F3F0EA' : gd < 0 ? '#E0689F' : '#9E84AE',
+        form: d[8].split('').map((t) => ({ t, ...F[t] })),
+        pos: String(pos).padStart(2, '0'),
+        up: d[9] === 'up', down: d[9] === 'down', same: d[9] === 'same',
+        cutBefore: pos === QUALIFY + 1,
+        posColor: q ? '#DED002' : '#9E84AE',
+        ptsColor: leader ? '#DED002' : '#F3F0EA',
+        rowStyle: base + (leader ? ' background: rgba(222,208,2,0.1); box-shadow: inset 0 0 0 1px rgba(222,208,2,0.35);' : '') + (q ? '' : ' opacity: 0.6;'),
+      };
+    });
+    return { rows };
+  }
+}
+</script>
+</body>
+</html>

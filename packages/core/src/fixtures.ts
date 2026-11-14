@@ -40,3 +40,25 @@ export function roundRobin(players: PlayerId[], opts: { doubleRound?: boolean } 
   }
   return rounds;
 }
+
+/**
+ * A matchday may not contain the same player twice. Given the matches already scheduled for a
+ * tournament and a candidate (matchday, home, away) to add or edit, returns the player id that
+ * would be double-booked, or null if the pairing is safe. Pass the candidate's own match id (when
+ * editing an existing match) so it doesn't conflict with itself.
+ */
+export function findMatchdayConflict(
+  existingMatches: Array<{ id?: string; matchday: number; homeId: PlayerId; awayId: PlayerId }>,
+  candidate: { id?: string; matchday: number; homeId: PlayerId; awayId: PlayerId },
+): PlayerId | null {
+  const booked = new Set<PlayerId>();
+  for (const m of existingMatches) {
+    if (m.matchday !== candidate.matchday) continue;
+    if (candidate.id && m.id === candidate.id) continue;
+    booked.add(m.homeId);
+    booked.add(m.awayId);
+  }
+  if (booked.has(candidate.homeId)) return candidate.homeId;
+  if (booked.has(candidate.awayId)) return candidate.awayId;
+  return null;
+}

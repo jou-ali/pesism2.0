@@ -7,7 +7,5 @@ public record MatchSideDto(
     String playerName,
     String avatarUrl,
     String teamName,
-    String crestUrl,
-    String primaryColor,
-    String secondaryColor
+    String crestUrl
 ) {}

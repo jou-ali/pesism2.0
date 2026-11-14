@@ -37,7 +37,7 @@ export async function listPosters(): Promise<PosterListing[]> {
     id: 'matchday-preview',
     title: `Matchday ${previewMd} preview`,
     path: `/api/share/matchday/${previewMd}/preview`,
-    caption: `Matchday ${String(previewMd).padStart(2, '0')} is live 🔥 Play by ${mdPreview?.deadline.replace('Play by ', '').split(' · ')[0] ?? 'the deadline'}. tournax.auradev.in`,
+    caption: `Matchday ${String(previewMd).padStart(2, '0')} is live 🔥 Deadline: ${mdPreview?.deadline.replace('Deadline: ', '').split(' · ')[0] ?? 'the deadline'}. tournax.auradev.in`,
     available: mdPreview !== null,
   });
   if (mdPreview) out[out.length - 1].path = withVersion(out[out.length - 1].path, mdPreview);

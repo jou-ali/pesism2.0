@@ -29,23 +29,39 @@ export async function GET(req: Request) {
           <AwardHeroPanel side={data.leader} tint="rgba(0,178,169,0.42)" />
 
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, background: '#DED002', color: '#1E0825', borderRadius: 24, padding: 24 }}>
-              <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2 }}>CONCEDED</span>
-              <span style={{ fontFamily: 'Furore', fontSize: 96, lineHeight: 0.95 }}>{data.conceded}</span>
-              <span style={{ fontSize: 18, fontWeight: 700 }}>In {data.matches} matches. A brick wall.</span>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'stretch', gap: 24, background: '#DED002', color: '#1E0825', borderRadius: 24, padding: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2 }}>CONCEDED</span>
+                <span style={{ fontFamily: 'Furore', fontSize: 96, lineHeight: 0.95 }}>{data.conceded}</span>
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14, paddingLeft: 24, borderLeft: '2px solid rgba(30,8,37,0.18)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {/* Furore has no U+2212 glyph — ASCII hyphen here, same 34px treatment as the +N posters. */}
+                  <span style={{ fontFamily: 'Furore', fontSize: 34, lineHeight: 1 }}>{`-${data.fewerThanSecond}`}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700 }}>fewer than 2nd place</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontFamily: 'Furore', fontSize: 34, lineHeight: 1 }}>{data.concededPerMatch.toFixed(2)}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700 }}>conceded per match</span>
+                </div>
+              </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="CLEAN SHEETS" value={String(data.cleanSheets)} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="CLEAN SHEETS" value={String(data.cleanSheets)} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="WINS" value={String(data.wins)} />
+                </div>
               </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="PER MATCH" value={data.concededPerMatch.toFixed(2)} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="LONGEST RUN" value={`${data.longestRun} shutouts`} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="MATCHES" value={String(data.matches)} />
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="LONGEST RUN" value={`${data.longestRun} shutouts`} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="MATCHES" value={String(data.matches)} />
+                </div>
               </div>
             </div>
             <ChasingPackCard label="NEXT BEST" rows={data.chasers} />

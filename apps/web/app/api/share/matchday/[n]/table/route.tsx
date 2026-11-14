@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, TableHeaderRow, TableRow, CutLine } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, TableHeaderRow, TableRow, CutLine, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getMatchdayTableData } from '@/lib/share/data';
 
 export const runtime = 'nodejs';
@@ -20,6 +20,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ n: strin
   const [fonts, trophy] = await Promise.all([loadShareFonts(), loadTrophyDataUri()]);
   const dense = data.rows.length > 10;
   const mdStr = String(data.matchday).padStart(2, '0');
+  // Card: padding 24 horizontal; each row: padding 8 horizontal (dense and standard both).
+  const rowWidthPx = POSTER_CONTENT_WIDTH - 24 * 2 - 8 * 2;
 
   return new ImageResponse(
     (
@@ -49,7 +51,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ n: strin
           {data.rows.map((row) => (
             <div key={row.pos} style={{ display: 'flex', flexDirection: 'column' }}>
               {row.cutBefore ? <CutLine small={dense} /> : null}
-              <TableRow row={row} dense={dense} />
+              <TableRow row={row} dense={dense} rowWidthPx={rowWidthPx} />
             </div>
           ))}
         </div>

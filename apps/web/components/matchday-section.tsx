@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { computeStandings } from '@tournax/core';
 import { fetchRegistrationWindow, registrationWindowSummary, spotsLabel } from '@/lib/registration-window';
@@ -11,14 +12,14 @@ import {
 import type { TournamentStatusValue } from '@/lib/tournax-api';
 import { computeMovement, isCountedMatch, latestPlayedMatchday, matchdayChipsByNumber } from '@/lib/matchday-status';
 import { computeLastSeasonRecap, type LastSeasonRecap } from '@/lib/last-season';
+import { avatarSvg } from '@/lib/avatar';
+import { fallbackPaletteFor } from '@/lib/crest';
 import { groupByMatchday } from './fixtures-panels';
 import { SplitHeading } from './split-heading';
 import { Button } from './ui/button';
 import { TeamCrest } from './team-crest';
 import { MatchCard, type MatchCardSide } from './match-card';
 import { LeagueTable } from './league-table';
-import { ShareImageActions } from './share-image-actions';
-import { getMatchdayPreviewData, posterVersion } from '@/lib/share/data';
 
 const VALID_STATUSES = new Set(['draft', 'registration', 'league', 'knockout', 'finished']);
 
@@ -61,8 +62,6 @@ function toSide(byId: Map<string, SeasonPlayer>, playerNames: Record<string, str
     avatarUrl: p?.avatarUrl ?? null,
     teamName: p?.teamName ?? null,
     crestUrl: p?.crestUrl ?? null,
-    primaryColor: p?.primaryColor ?? null,
-    secondaryColor: p?.secondaryColor ?? null,
   };
 }
 
@@ -75,6 +74,44 @@ function formatCountdown(deadlineIso: string | null): string | null {
   if (days > 0) return `${days}d ${hours}h left`;
   const mins = Math.floor((diff % 3_600_000) / 60_000);
   return `${hours}h ${mins}m left`;
+}
+
+function RegPlayerCard({ player, index }: { player: SeasonPlayer; index: number }) {
+  const tint = {
+    '--home-tint': player.teamName ? `${fallbackPaletteFor(player.teamName)[0]}2e` : undefined,
+  } as CSSProperties;
+
+  return (
+    <Link href={`/players/${player.id}`} className="match-card card card--tint" style={tint} data-reveal>
+      <div className="card__head">
+        <span className="match-card__label">SPOT {String(index).padStart(2, '0')}</span>
+        <span className="pill pill--success">Registered</span>
+      </div>
+
+      <div className="match-card__body" style={{ gridTemplateColumns: '1fr' }}>
+        <div className="match-card__side">
+          <TeamCrest teamName={player.teamName} crestUrl={player.crestUrl} size={64} className="match-card__crest" />
+          <p className="match-card__team">{player.teamName ?? 'Team pending'}</p>
+          <div className="match-card__player">
+            {player.avatarUrl ? (
+              <Image src={player.avatarUrl} alt="" width={24} height={24} className="match-card__avatar" unoptimized />
+            ) : (
+              <span
+                className="match-card__avatar"
+                dangerouslySetInnerHTML={{ __html: avatarSvg(player.name, player.id.length) }}
+              />
+            )}
+            <span className="match-card__player-name">{player.name}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="card__foot">
+        <span className="match-card__foot-text">Locked in for Season 3</span>
+        <span className="card__foot-cta">View player &rarr;</span>
+      </div>
+    </Link>
+  );
 }
 
 async function RegistrationPhase({ competition }: { competition: SeasonCompetition }) {
@@ -100,21 +137,9 @@ async function RegistrationPhase({ competition }: { competition: SeasonCompetiti
             </div>
           </div>
         ) : (
-          <div className="reg-players" data-stagger>
-            {competition.players.map((p) => (
-              <div className="reg-player" data-reveal key={p.id}>
-                <TeamCrest
-                  teamName={p.teamName}
-                  crestUrl={p.crestUrl}
-                  primaryColor={p.primaryColor}
-                  secondaryColor={p.secondaryColor}
-                  size={48}
-                />
-                <span className="reg-player__name">{p.teamName ?? 'Team pending'}</span>
-                <span className="player__tag" style={{ fontSize: '.75rem' }}>
-                  {p.name}
-                </span>
-              </div>
+          <div className="match-cards" data-stagger>
+            {competition.players.map((p, i) => (
+              <RegPlayerCard key={p.id} player={p} index={i + 1} />
             ))}
           </div>
         )}
@@ -166,13 +191,10 @@ async function LeaguePhase({ competition, overrideMatchday }: { competition: Sea
   const playerCrests = Object.fromEntries(
     competition.players.map((p) => [
       p.id,
-      { teamName: p.teamName, crestUrl: p.crestUrl, primaryColor: p.primaryColor, secondaryColor: p.secondaryColor },
+      { teamName: p.teamName, crestUrl: p.crestUrl },
     ]),
   );
   const chips = matchdayChipsByNumber(matchdays);
-
-  const isCurrentMd = selectedMd === competition.currentMatchday;
-  const previewData = isCurrentMd ? await getMatchdayPreviewData(selectedMd, false) : null;
 
   return (
     <section className="section matchday" id="matchday" aria-labelledby="matchday-title">
@@ -185,13 +207,6 @@ async function LeaguePhase({ competition, overrideMatchday }: { competition: Sea
           <p className="lead" data-reveal>
             {played} of {matches.length} played{countdown ? ` · ${countdown}` : ''}
           </p>
-          {previewData ? (
-            <ShareImageActions
-              imageUrl={`/api/share/matchday/${selectedMd}/preview?v=${posterVersion(previewData)}`}
-              caption={`Matchday ${String(selectedMd).padStart(2, '0')} is live 🔥 Play by ${previewData.deadline.replace('Play by ', '')}`}
-              filename={`matchday-${selectedMd}-preview.png`}
-            />
-          ) : null}
         </div>
 
         <nav className="matchday-tabs" aria-label="Matchdays">
@@ -350,13 +365,7 @@ function FinishedPhase({ competition }: { competition: SeasonCompetition }) {
 
         {champion ? (
           <div className="panel" data-reveal style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem 1.75rem' }}>
-            <TeamCrest
-              teamName={champion.teamName}
-              crestUrl={champion.crestUrl}
-              primaryColor={champion.primaryColor}
-              secondaryColor={champion.secondaryColor}
-              size={72}
-            />
+            <TeamCrest teamName={champion.teamName} crestUrl={champion.crestUrl} size={72} />
             <div>
               <p className="panel__foot" style={{ padding: 0 }}>
                 Champion

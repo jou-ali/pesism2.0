@@ -1,7 +1,7 @@
 import type { SeasonCompetition, SeasonPlayer } from '@/lib/season-competition';
-import { isCountedMatch, matchdayChipsByNumber } from '@/lib/matchday-status';
+import { matchdayChipsByNumber } from '@/lib/matchday-status';
 import { CompetitionComingSoon } from './competition-coming-soon';
-import { TeamCrest } from './team-crest';
+import { MatchCard, type MatchCardSide } from './match-card';
 
 export function groupByMatchday(competition: SeasonCompetition) {
   const days = new Map<number, SeasonCompetition['matches']>();
@@ -13,9 +13,19 @@ export function groupByMatchday(competition: SeasonCompetition) {
   return [...days.entries()].sort((a, b) => a[0] - b[0]);
 }
 
+function toSide(byId: Map<string, SeasonPlayer>, playerNames: Record<string, string>, playerId: string): MatchCardSide {
+  const p = byId.get(playerId);
+  return {
+    playerId,
+    playerName: p?.name ?? playerNames[playerId] ?? playerId,
+    avatarUrl: p?.avatarUrl ?? null,
+    teamName: p?.teamName ?? null,
+    crestUrl: p?.crestUrl ?? null,
+  };
+}
+
 export function FixturesPanels({ competition }: { competition: SeasonCompetition | null }) {
   const leagueMatches = competition?.matches ?? [];
-  const names = competition?.playerNames ?? {};
   const hasSchedule = leagueMatches.length > 0;
 
   if (!hasSchedule) {
@@ -33,6 +43,7 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
   const matchdays = groupByMatchday(competition!);
   const chips = matchdayChipsByNumber(matchdays);
   const byId = new Map((competition!.players ?? []).map((p) => [p.id, p]));
+  const playerNames = competition!.playerNames;
 
   return (
     <div className="fixtures">
@@ -44,53 +55,19 @@ export function FixturesPanels({ competition }: { competition: SeasonCompetition
               <h3>Matchday {matchday}</h3>
               <span className={chip.className}>{chip.label}</span>
             </div>
-            <ul className="fixture-list">
-              {matches.map((match) => {
-                const played = isCountedMatch(match);
-                return (
-                  <li className="fixture-row" key={match.id}>
-                    <span className="fixture-row__side fixture-row__side--home">
-                      <FixtureName playerId={match.homeId} byId={byId} names={names} />
-                    </span>
-                    <span className="fixture-row__score">
-                      {played ? `${match.homeGoals} – ${match.awayGoals}` : 'vs'}
-                    </span>
-                    <span className="fixture-row__side">
-                      <FixtureName playerId={match.awayId} byId={byId} names={names} />
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="match-cards">
+              {matches.map((match, i) => (
+                <MatchCard
+                  key={match.id}
+                  match={{ ...match, index: i + 1, deadline: null }}
+                  home={toSide(byId, playerNames, match.homeId)}
+                  away={toSide(byId, playerNames, match.awayId)}
+                />
+              ))}
+            </div>
           </div>
         );
       })}
     </div>
-  );
-}
-
-function FixtureName({
-  playerId,
-  byId,
-  names,
-}: {
-  playerId: string;
-  byId: Map<string, SeasonPlayer>;
-  names: Record<string, string>;
-}) {
-  const player = byId.get(playerId);
-  return (
-    <a href={`/players/${playerId}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
-      {player ? (
-        <TeamCrest
-          teamName={player.teamName}
-          crestUrl={player.crestUrl}
-          primaryColor={player.primaryColor}
-          secondaryColor={player.secondaryColor}
-          size={18}
-        />
-      ) : null}
-      {names[playerId] ?? playerId}
-    </a>
   );
 }

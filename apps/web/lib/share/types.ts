@@ -1,9 +1,5 @@
 export type Badge = {
   teamName: string;
-  short: string;
-  primaryColor: string;
-  secondaryColor: string;
-  ink: string;
   crestUrl?: string | null;
 };
 
@@ -14,7 +10,7 @@ export type Side = Badge & {
 
 export type Fixture = { home: Side; away: Side };
 
-export type Tie = { label: string; seeds?: string; home: Side; away: Side };
+export type Tie = { label: string; home: Side; away: Side };
 
 export type Movement = 'up' | 'down' | 'same';
 

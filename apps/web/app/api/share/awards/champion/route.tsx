@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, Shield } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, Shield, furoreCase } from '@/lib/share/components';
 import { getChampionData } from '@/lib/share/data';
 
 export const runtime = 'nodejs';
@@ -73,14 +73,14 @@ export async function GET(req: Request) {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 20,
+                gap: 18,
                 padding: 24,
                 background: 'linear-gradient(180deg, rgba(30,8,37,0) 0%, rgba(30,8,37,0.9) 45%)',
               }}
             >
-              <Shield size={72} short={w.short} c1={w.primaryColor} c2={w.secondaryColor} ink={w.ink} crestUrl={w.crestUrl} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ fontFamily: 'Furore', fontSize: 56, lineHeight: 0.95, textTransform: 'uppercase' }}>{w.playerName}</span>
+              <Shield size={72} teamName={w.teamName} crestUrl={w.crestUrl} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+                <span style={{ fontFamily: 'Furore', fontSize: 56, lineHeight: 0.95 }}>{furoreCase(w.playerName)}</span>
                 <span style={{ fontSize: 22, fontWeight: 600, color: '#CBB8D9' }}>{w.teamName}</span>
               </div>
             </div>
@@ -95,17 +95,50 @@ export async function GET(req: Request) {
                 flexDirection: 'row',
                 borderRadius: 24,
                 overflow: 'hidden',
-                background: 'radial-gradient(circle at 50% 60%, rgba(245,185,59,0.35) 0%, rgba(245,185,59,0.08) 45%, #27092F 75%)',
+                // A radial-gradient here renders as a visible ring in Satori (it bands at the
+                // colour stop instead of fading smoothly), so the glow is a plain circle instead.
+                background: '#27092F',
                 border: '1px solid rgba(245,185,59,0.45)',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <img src={trophy} style={{ height: '82%', width: 'auto' }} />
+              {/* Soft gold glow behind the cup — two stacked circles rather than a radial-gradient
+                  (which bands into a ring in Satori). The box-shadow blur softens the inner one;
+                  the second, larger, fainter circle extends the falloff further out. */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 520,
+                  height: 520,
+                  borderRadius: 260,
+                  background: 'rgba(245,185,59,0.06)',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 300,
+                  height: 300,
+                  borderRadius: 150,
+                  background: 'rgba(245,185,59,0.12)',
+                  boxShadow: '0 0 100px 50px rgba(245,185,59,0.12)',
+                }}
+              />
+              {/* A percentage (or calc()) height on this <img> renders invisibly in Satori — only an
+                  explicit pixel height works. 350 is sized to sit comfortably inside this flex:1 card
+                  with roughly a 24px breath on every side at the sample data's card height. */}
+              <img src={trophy} height={350} style={{ filter: 'drop-shadow(0 0 20px rgba(245,185,59,0.2))' }} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, background: '#DED002', color: '#1E0825', borderRadius: 24, padding: 24 }}>
               <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 2 }}>THE FINAL</span>
-              <span style={{ fontFamily: 'Furore', fontSize: 30, lineHeight: 1.1 }}>{data.scoreLine}</span>
+              <span style={{ fontFamily: 'Furore', fontSize: 30, lineHeight: 1.1 }}>{furoreCase(data.scoreLine)}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', background: '#27092F', border: '1px solid rgba(243,240,234,0.12)', borderRadius: 24, padding: '8px 24px' }}>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid rgba(243,240,234,0.12)' }}>

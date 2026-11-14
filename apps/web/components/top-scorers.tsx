@@ -21,13 +21,7 @@ export function TopScorers({
             <span className="scorer__pos">{String(i + 1).padStart(2, '0')}</span>
             <span className="scorer__name" style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}>
               {crest ? (
-                <TeamCrest
-                  teamName={crest.teamName}
-                  crestUrl={crest.crestUrl}
-                  primaryColor={crest.primaryColor}
-                  secondaryColor={crest.secondaryColor}
-                  size={18}
-                />
+                <TeamCrest teamName={crest.teamName} crestUrl={crest.crestUrl} size={18} />
               ) : null}
               {playerNames[s.playerId] ?? s.playerId}
             </span>

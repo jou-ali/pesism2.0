@@ -13,7 +13,8 @@ export async function GET(req: Request) {
   if (!data) return new Response('Not found', { status: 404 });
 
   const fonts = await loadShareFonts();
-  const gd = data.goalDiff >= 0 ? `+${data.goalDiff}` : `−${Math.abs(data.goalDiff)}`;
+  // Furore has no U+2212 glyph — use the ASCII hyphen here; the true minus stays in Onest text (the table's GD column).
+  const gd = data.goalDiff >= 0 ? `+${data.goalDiff}` : `-${Math.abs(data.goalDiff)}`;
 
   return new ImageResponse(
     (
@@ -46,18 +47,22 @@ export async function GET(req: Request) {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="MATCHES" value={String(data.matches)} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="MATCHES" value={String(data.matches)} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="GOAL DIFF" value={gd} />
+                </div>
               </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="GOAL DIFF" value={gd} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="BIGGEST HAUL" value={data.biggestHaul ? `${data.biggestHaul.goals} v ${data.biggestHaul.opponentShort}` : '—'} />
-              </div>
-              <div style={{ display: 'flex', width: 242 }}>
-                <StatCard label="BLANKS" value={String(data.blanks)} />
+              <div style={{ display: 'flex', flexDirection: 'row', gap: 16, width: '100%' }}>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="BIGGEST HAUL" value={data.biggestHaul ? `${data.biggestHaul.goals} v ${data.biggestHaul.opponentShort}` : '—'} />
+                </div>
+                <div style={{ display: 'flex', flex: '1 1 0', minWidth: 0 }}>
+                  <StatCard label="BLANKS" value={String(data.blanks)} />
+                </div>
               </div>
             </div>
             <ChasingPackCard label="CHASING PACK" rows={data.chasers} />

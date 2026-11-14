@@ -71,6 +71,7 @@
   background: transparent;
   border: none;
   padding: 0;
+  overflow-x: auto;
 }
 
 /* Match stats score-sheet — a three-column comparison grid (home stat / label / away

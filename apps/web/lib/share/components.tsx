@@ -1,4 +1,7 @@
 import type { Badge, ChaserRow, Fixture, Movement, Side, TableRowData, Tie } from './types';
+import { fitFontSize } from './fit-text';
+import { initialsFor, fallbackPaletteFor } from '@/lib/crest';
+import { inkFor } from './colors';
 
 const INK = '#F3F0EA';
 const MUTED = '#9E84AE';
@@ -13,23 +16,63 @@ const LINE = 'rgba(243,240,234,0.12)';
 const SHIELD_PATH = 'M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z';
 const SHIELD_BAND = 'M36 2 68 12v8H4v-8z';
 
-/** The team shield shape — generated badge (two-tone fill + short name) or a real uploaded crest image. */
+/** Furore is caps-only and drops glyphs it doesn't have (missing accents fall back to another
+ * font mid-word) — strip diacritics and uppercase before handing text to it. Onest keeps accents. */
+export function furoreCase(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+}
+
+/** A team name, sized to the real Furore glyph metrics so it always fits `maxWidthPx` without ever
+ * truncating \u2014 wraps onto a second line only if it still doesn't fit at `min`. Every caller must
+ * compute and pass its own exact available width; this never guesses or clips. */
+export function FitTeamName({
+  text,
+  maxWidthPx,
+  max,
+  min,
+  align = 'left',
+  lineHeight = 1.05,
+  color = INK,
+}: {
+  text: string;
+  maxWidthPx: number;
+  max: number;
+  min: number;
+  align?: 'left' | 'right';
+  lineHeight?: number;
+  color?: string;
+}) {
+  const { size, lineTexts } = fitFontSize(furoreCase(text), maxWidthPx, { max, min });
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: align === 'right' ? 'flex-end' : 'flex-start' }}>
+      {lineTexts.map((line, i) => (
+        <span key={i} style={{ fontFamily: 'Furore', fontSize: size, lineHeight, color, whiteSpace: 'nowrap' }}>
+          {line}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** The team shield shape — generated badge (two-tone fill + short name) or a real uploaded crest
+ * image. There's no stored colour anywhere: the generated badge's colours and short code are
+ * always derived from the team name's hash (`lib/crest.ts`), the same function the public site's
+ * `TeamCrest` uses, so a team looks the same everywhere until it has a real uploaded crest. */
 export function Shield({
   size,
-  short,
-  c1,
-  c2,
-  ink,
+  height: heightProp,
+  teamName,
   crestUrl,
 }: {
   size: number;
-  short: string;
-  c1: string;
-  c2: string;
-  ink: string;
+  height?: number;
+  teamName: string;
   crestUrl?: string | null;
 }) {
-  const height = Math.round(size * (84 / 72));
+  const height = heightProp ?? Math.round(size * (84 / 72));
   if (crestUrl) {
     return (
       <img
@@ -40,6 +83,9 @@ export function Shield({
       />
     );
   }
+  const short = initialsFor(teamName);
+  const [c1, c2] = fallbackPaletteFor(teamName);
+  const ink = inkFor(c1);
   // Satori doesn't support <text> inside <svg> — draw the shield shape only, then overlay the
   // short name as a native (non-SVG) element so it still renders in Furore.
   return (
@@ -118,14 +164,12 @@ export function PlayerPhoto({
       <span
         style={{
           position: 'absolute',
-          top: 12,
-          width: '100%',
-          textAlign: 'center',
+          top: 14,
           fontSize: 11,
           fontWeight: 800,
           letterSpacing: 2,
           color: MUTED,
-          ...(labelAlign === 'left' ? { left: 0 } : { right: 0 }),
+          ...(labelAlign === 'left' ? { left: 14 } : { right: 14 }),
         }}
       >
         PLAYER PHOTO
@@ -207,6 +251,9 @@ export function StatCard({ label, value }: { label: string; value: string }) {
       style={{
         display: 'flex',
         flexDirection: 'column',
+        flex: 1,
+        minWidth: 0,
+        boxSizing: 'border-box',
         gap: 4,
         background: CARD_BG,
         border: `1px solid ${LINE}`,
@@ -230,112 +277,101 @@ export function SubtitleLine({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SideBlock({ side, align }: { side: Fixture['home']; align: 'left' | 'right' }) {
+function SideBlock({
+  side,
+  align,
+  crestSize = 72,
+  fitMax,
+  fitMin,
+  textWidthPx,
+  playerFontSize = 20,
+  gap = 18,
+}: {
+  side: Fixture['home'];
+  align: 'left' | 'right';
+  crestSize?: number;
+  fitMax: number;
+  fitMin: number;
+  textWidthPx: number;
+  playerFontSize?: number;
+  gap?: number;
+}) {
   const info = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, alignItems: align === 'right' ? 'flex-end' : 'flex-start' }}>
-      <span
-        style={{
-          fontFamily: 'Furore',
-          fontSize: 26,
-          lineHeight: 1.05,
-          color: INK,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          maxWidth: 280,
-        }}
-      >
-        {side.teamName}
-      </span>
-      <span style={{ fontSize: 20, fontWeight: 500, color: MUTED_2 }}>{side.playerName}</span>
+      <FitTeamName text={side.teamName} maxWidthPx={textWidthPx} max={fitMax} min={fitMin} align={align} />
+      <span style={{ fontSize: playerFontSize, fontWeight: 500, color: MUTED_2 }}>{side.playerName}</span>
     </div>
   );
   const shield = (
-    <Shield size={72} short={side.short} c1={side.primaryColor} c2={side.secondaryColor} ink={side.ink} crestUrl={side.crestUrl} />
+    <Shield size={crestSize} teamName={side.teamName} crestUrl={side.crestUrl} />
   );
+  // Mirrors the reference's CSS grid "minmax(0,1fr)" side columns: flex:1 to fill the row, with
+  // minWidth:0 so the ellipsis text block can actually shrink instead of forcing an overflow.
+  // [shield, info] are always direct children (no Fragment) — Satori doesn't apply this row's
+  // `gap`/`alignItems` to a Fragment's children, only to its own direct children. `row-reverse`
+  // flips the visual order for the right side instead of swapping which element renders first.
+  // `justifyContent: 'flex-start'` is correct for BOTH directions: row-reverse also reverses which
+  // physical edge "flex-start" packs against (the row's own end), so it still hugs the outer edge.
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: align === 'right' ? 'row-reverse' : 'row',
         alignItems: 'center',
-        gap: 18,
+        gap,
         minWidth: 0,
         flex: 1,
-        justifyContent: align === 'right' ? 'flex-end' : 'flex-start',
+        justifyContent: 'flex-start',
       }}
     >
-      {align === 'left' ? (
-        <>
-          {shield}
-          {info}
-        </>
-      ) : (
-        <>
-          {info}
-          {shield}
-        </>
-      )}
+      {shield}
+      {info}
     </div>
   );
 }
 
-/** The single-row fixture / tie card: crest + team + player on both sides, a VS circle between them. */
-export function FixtureCard({ fixture, vsSize = 72 }: { fixture: Fixture; vsSize?: number }) {
+/** The single-row fixture / tie card: crest + team + player on both sides, a VS circle between them.
+ * `cardWidthPx` is the card's own inner content width (after its padding) — the caller computes it
+ * from its own layout rather than this component guessing it, so the team name can be sized to the
+ * real remaining space. */
+export function FixtureCard({
+  fixture,
+  cardWidthPx,
+  vsSize = 72,
+  vsColumnWidth = 96,
+}: {
+  fixture: Fixture;
+  cardWidthPx: number;
+  vsSize?: number;
+  vsColumnWidth?: number;
+}) {
+  const crestSize = 72;
+  const gap = 18;
+  const textWidthPx = (cardWidthPx - vsColumnWidth) / 2 - crestSize - gap;
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16, width: '100%' }}>
-      <SideBlock side={fixture.home} align="left" />
-      <Chip text="VS" shape="circle" size={vsSize} fontSize={Math.round(vsSize * 0.36)} fontFamily="Furore" />
-      <SideBlock side={fixture.away} align="right" />
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+      <SideBlock side={fixture.home} align="left" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
+      <div style={{ display: 'flex', flexDirection: 'row', width: vsColumnWidth, flexShrink: 0, justifyContent: 'center' }}>
+        <Chip text="VS" shape="circle" size={vsSize} fontSize={Math.round(vsSize * 0.36)} fontFamily="Furore" bg="#DED002" color="#1E0825" />
+      </div>
+      <SideBlock side={fixture.away} align="right" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
     </div>
   );
 }
 
-/** The dense two-column fixture tile used once there are 6+ fixtures on a matchday. */
-export function CompactFixtureCard({ fixture }: { fixture: Fixture }) {
-  const row = (side: Fixture['home']) => (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 14, minWidth: 0 }}>
-      <Shield size={44} short={side.short} c1={side.primaryColor} c2={side.secondaryColor} ink={side.ink} crestUrl={side.crestUrl} />
-      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        <span
-          style={{
-            fontFamily: 'Furore',
-            fontSize: 21,
-            lineHeight: 1.1,
-            color: INK,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            maxWidth: 220,
-          }}
-        >
-          {side.teamName}
-        </span>
-        <span style={{ fontSize: 16, fontWeight: 500, color: MUTED_2 }}>{side.playerName}</span>
-      </div>
-    </div>
-  );
+/** The compact single-row fixture tile used once there are 6-7 fixtures on a matchday. */
+export function CompactFixtureCard({ fixture, cardWidthPx }: { fixture: Fixture; cardWidthPx: number }) {
+  const crestSize = 48;
+  const gap = 14;
+  const vsColumnWidth = 72;
+  const textWidthPx = (cardWidthPx - vsColumnWidth) / 2 - crestSize - gap;
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: 6,
-        background: CARD_BG,
-        border: `1px solid ${LINE}`,
-        borderRadius: 24,
-        padding: '16px 24px',
-        minWidth: 0,
-        width: '100%',
-      }}
-    >
-      {row(fixture.home)}
-      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 58 }}>
-        <Chip text="VS" fontFamily="Furore" fontSize={14} bg={YELLOW} color={YELLOW_INK} padding="3px 10px" letterSpacing={0} />
-        <div style={{ display: 'flex', flex: 1, height: 1, background: LINE }} />
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+      <SideBlock side={fixture.home} align="left" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
+      <div style={{ display: 'flex', flexDirection: 'row', width: vsColumnWidth, flexShrink: 0, justifyContent: 'center' }}>
+        <Chip text="VS" fontFamily="Furore" fontSize={16} bg={YELLOW} color={YELLOW_INK} padding="5px 12px" letterSpacing={0} />
       </div>
-      {row(fixture.away)}
+      <SideBlock side={fixture.away} align="right" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
     </div>
   );
 }
@@ -365,15 +401,27 @@ function MovementArrow({ movement }: { movement: Movement | null }) {
 const fmtGd = (gd: number) => (gd > 0 ? `+${gd}` : gd < 0 ? `−${Math.abs(gd)}` : '0');
 
 /** One league-table row. `dense` is the 11-14 player layout ("team · player" on one line, smaller type). */
-export function TableRow({ row, dense = false }: { row: TableRowData; dense?: boolean }) {
+/** Reserved width for the "· PlayerName" portion of a dense row's single-line team+player text,
+ * so the team name's own fit-width is exact rather than a flex:1 guess shared with a sibling. */
+const DENSE_PLAYER_RESERVE_PX = 150;
+
+export function TableRow({ row, dense = false, rowWidthPx }: { row: TableRowData; dense?: boolean; rowWidthPx: number }) {
   const posStr = String(row.pos).padStart(2, '0');
   const posColor = row.qualifies ? YELLOW : MUTED;
   const ptsColor = row.isLeader ? YELLOW : INK;
   const crestSize = dense ? 30 : 40;
+  const crestHeight = dense ? 35 : 46;
 
   const cols = dense
     ? { gap: 10, pad: '3px 8px', radius: 12, pos: 22, stat: 19, pts: 26, colW: [40, 20, 30, 48, 58] }
     : { gap: 10, pad: '6px 8px', radius: 14, pos: 26, stat: 21, pts: 30, colW: [44, 24, 40, 50, 64] };
+
+  // 10 children (pos, movement, crest, text, 5 stat columns, pts) → 9 gaps. rowWidthPx already
+  // excludes this row's own horizontal padding (the caller derives it that way).
+  const fixedColsWidth = cols.colW[0] + cols.colW[1] + cols.colW[2] + cols.colW[3] * 5 + cols.colW[4];
+  const gapsWidth = cols.gap * 9;
+  const textAreaWidth = rowWidthPx - fixedColsWidth - gapsWidth;
+  const textWidthPx = dense ? textAreaWidth - 8 - DENSE_PLAYER_RESERVE_PX : textAreaWidth;
 
   return (
     <div
@@ -396,28 +444,16 @@ export function TableRow({ row, dense = false }: { row: TableRowData; dense?: bo
         <MovementArrow movement={row.movement} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', width: cols.colW[2] }}>
-        <Shield size={crestSize} short={row.short} c1={row.primaryColor} c2={row.secondaryColor} ink={row.ink} crestUrl={row.crestUrl} />
+        <Shield size={crestSize} height={crestHeight} teamName={row.teamName} crestUrl={row.crestUrl} />
       </div>
       {dense ? (
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 8, minWidth: 0, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden' }}>
-          <span style={{ fontFamily: 'Furore', fontSize: 18, color: INK, overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.teamName}</span>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 8, minWidth: 0, flex: 1 }}>
+          <FitTeamName text={row.teamName} maxWidthPx={textWidthPx} max={18} min={14} />
           <span style={{ fontSize: 15, fontWeight: 500, color: MUTED_2, flexShrink: 0 }}>&middot; {row.player}</span>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: 0, flex: 1 }}>
-          <span
-            style={{
-              fontFamily: 'Furore',
-              fontSize: 21,
-              lineHeight: 1.05,
-              color: INK,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {row.teamName}
-          </span>
+          <FitTeamName text={row.teamName} maxWidthPx={textWidthPx} max={21} min={14} />
           <span style={{ fontSize: 16, fontWeight: 500, color: MUTED_2 }}>{row.player}</span>
         </div>
       )}
@@ -483,7 +519,7 @@ export function ChasingPackRow({ row }: { row: ChaserRow }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%' }}>
       <span style={{ display: 'flex', width: 30, fontFamily: 'Furore', fontSize: 20, color: MUTED }}>{String(row.pos).padStart(2, '0')}</span>
-      <Shield size={30} short={row.short} c1={row.primaryColor} c2={row.secondaryColor} ink={row.ink} crestUrl={row.crestUrl} />
+      <Shield size={30} teamName={row.teamName} crestUrl={row.crestUrl} />
       <span
         style={{
           display: 'flex',
@@ -537,14 +573,14 @@ export function AwardHeroPanel({ side, tint }: { side: Side; tint: string }) {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 16,
+          gap: 18,
           padding: 24,
           background: 'linear-gradient(180deg, rgba(30,8,37,0) 0%, rgba(30,8,37,0.9) 45%)',
         }}
       >
-        <Shield size={60} short={side.short} c1={side.primaryColor} c2={side.secondaryColor} ink={side.ink} crestUrl={side.crestUrl} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontFamily: 'Furore', fontSize: 40, lineHeight: 1, textTransform: 'uppercase' }}>{side.playerName}</span>
+        <Shield size={60} teamName={side.teamName} crestUrl={side.crestUrl} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+          <span style={{ fontFamily: 'Furore', fontSize: 40, lineHeight: 1 }}>{furoreCase(side.playerName)}</span>
           <span style={{ fontSize: 20, fontWeight: 600, color: MUTED_2 }}>{side.teamName}</span>
         </div>
       </div>
@@ -576,9 +612,20 @@ export function ChasingPackCard({ label, rows }: { label: string; rows: ChaserRo
   );
 }
 
+// Each variant is wrapped in a single absolutely-positioned div (not a bare Fragment) — Satori's
+// flex `gap` otherwise still reserves a gap slot for a Fragment's children even though they're
+// position:absolute, pushing the header down by one full gap (40px).
+function GlowLayer({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, display: 'flex', flexDirection: 'row' }}>
+      {children}
+    </div>
+  );
+}
+
 const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactNode> = {
   default: (
-    <>
+    <GlowLayer>
       <div
         style={{
           position: 'absolute',
@@ -602,10 +649,13 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           background: 'radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%)',
         }}
       />
-    </>
+    </GlowLayer>
   ),
+  // Same violet top-right glow as 'default' — the earlier gold→violet hue mix rendered as a
+  // visible ring (Satori's radial-gradient interpolation bands at a colour-stop, not just an
+  // opacity stop), and looked like a muddy brown blob.
   champion: (
-    <>
+    <GlowLayer>
       <div
         style={{
           position: 'absolute',
@@ -615,7 +665,7 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           height: 900,
           borderRadius: 450,
           background:
-            'radial-gradient(circle, rgba(245,185,59,0.35) 0%, rgba(153,56,212,0.15) 45%, rgba(30,8,37,0) 70%)',
+            'radial-gradient(circle, rgba(153,56,212,0.42) 0%, rgba(153,56,212,0.12) 45%, rgba(30,8,37,0) 70%)',
         }}
       />
       <div
@@ -629,10 +679,12 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           background: 'radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%)',
         }}
       />
-    </>
+    </GlowLayer>
   ),
+  // Same violet top-right glow as 'default' — a gold→violet mix rendered as a muddy brown ring in
+  // Satori (it bands at the colour stop instead of fading smoothly).
   awardGold: (
-    <>
+    <GlowLayer>
       <div
         style={{
           position: 'absolute',
@@ -642,7 +694,7 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           height: 900,
           borderRadius: 450,
           background:
-            'radial-gradient(circle, rgba(245,185,59,0.3) 0%, rgba(153,56,212,0.12) 45%, rgba(30,8,37,0) 70%)',
+            'radial-gradient(circle, rgba(153,56,212,0.42) 0%, rgba(153,56,212,0.12) 45%, rgba(30,8,37,0) 70%)',
         }}
       />
       <div
@@ -656,10 +708,10 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           background: 'radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%)',
         }}
       />
-    </>
+    </GlowLayer>
   ),
   final: (
-    <>
+    <GlowLayer>
       <div
         style={{
           position: 'absolute',
@@ -683,11 +735,15 @@ const GLOWS: Record<'default' | 'champion' | 'awardGold' | 'final', React.ReactN
           background: 'radial-gradient(circle, rgba(245,185,59,0.32) 0%, rgba(245,185,59,0.08) 45%, rgba(30,8,37,0) 70%)',
         }}
       />
-    </>
+    </GlowLayer>
   ),
 };
 
 /** The shared 1080x1350 frame: background glows, optional trophy watermark, brand header, tagline footer. */
+/** The poster's inner content width: 1080 minus the frame's 72px left/right padding. Routes use
+ * this (minus their own card padding) to compute the exact width available to a team name. */
+export const POSTER_CONTENT_WIDTH = 1080 - 72 * 2;
+
 export function PosterFrame({
   tag,
   glow = 'default',
@@ -709,7 +765,10 @@ export function PosterFrame({
         background: '#1E0825',
         color: INK,
         fontFamily: 'Onest',
-        padding: '64px 72px 56px',
+        paddingTop: 64,
+        paddingRight: 72,
+        paddingBottom: 56,
+        paddingLeft: 72,
         display: 'flex',
         flexDirection: 'column',
         gap: 40,
@@ -717,11 +776,7 @@ export function PosterFrame({
     >
       {GLOWS[glow]}
       {trophyDataUri ? (
-        <img
-          src={trophyDataUri}
-          width={360}
-          style={{ position: 'absolute', top: 70, right: -40, opacity: 0.22 }}
-        />
+        <img src={trophyDataUri} width={360} style={{ position: 'absolute', top: 70, right: -40, opacity: 0.22 }} />
       ) : null}
 
       <div

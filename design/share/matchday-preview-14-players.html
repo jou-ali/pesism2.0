@@ -1,0 +1,120 @@
+<!-- Design reference for the matchday-preview-14-players share image (1080x1350). Exported from the TOURNAX Share Images design canvas.
+     /_blob/6ee48078... = apps/web/app/fonts/furore/Furore.otf ; /_blob/66412913... = apps/web/public/hero/trophy.png
+     Sample data only; 'PLAYER PHOTO' blocks are where the player's uploaded photo goes. Rebuild with next/og (flexbox only). -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Matchday preview, 14 players</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&amp;display=swap">
+<style>
+@font-face{font-family:"Furore";src:url(/_blob/6ee480781b6660a899e00b3ad8dfe437) format("opentype");font-display:block}
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1080px; height: 1350px; box-sizing: border-box; overflow: hidden; background: #1E0825; color: #F3F0EA; font-family: Onest, sans-serif; padding: 64px 72px 56px; display: flex; flex-direction: column; gap: 40px;">
+
+<div aria-hidden="true" style="position: absolute; top: -260px; right: -220px; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(153,56,212,0.42) 0%, rgba(153,56,212,0.12) 45%, rgba(30,8,37,0) 70%);"></div>
+<div aria-hidden="true" style="position: absolute; bottom: -300px; left: -260px; width: 760px; height: 760px; border-radius: 50%; background: radial-gradient(circle, rgba(222,208,2,0.14) 0%, rgba(30,8,37,0) 65%);"></div>
+<img src="/_blob/66412913ef9dc238a66b81142f8d8e9a" alt="" aria-hidden="true" style="position: absolute; top: 70px; right: -40px; width: 360px; height: auto; opacity: 0.22;">
+
+<header style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<span style="font-family: Furore, sans-serif; font-size: 40px; line-height: 1; letter-spacing: 0.02em;">TOURNAX</span>
+<span style="font-size: 18px; font-weight: 700; letter-spacing: 0.24em; color: #DED002;">PESISM 2.0</span>
+</div>
+<span style="background: #830D5C; color: #F3F0EA; font-size: 18px; font-weight: 700; letter-spacing: 0.16em; padding: 12px 22px; border-radius: 999px;">LEAGUE STAGE</span>
+</header>
+
+<section style="position: relative; display: flex; flex-direction: column; gap: 16px;">
+<div style="display: flex; align-items: flex-end; gap: 28px;"><span style="font-family: Furore, sans-serif; font-size: 112px; line-height: 0.9">MATCH<br>DAY</span><span style="font-family: Furore, sans-serif; font-size: 236px; line-height: 0.78; color: rgb(222, 208, 2); position: relative; top: -20px">01</span></div>
+<p style="margin: 0; display: flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 600; color: #CBB8D9;">
+<span style="width: 12px; height: 12px; border-radius: 50%; background: #DED002;"></span>
+Play by Sun, 23 Nov · 11:59 PM IST
+</p>
+</section>
+
+<section style="position: relative; flex: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 14px;">
+<sc-for list="{{fixtures}}" as="f" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; justify-content: center; gap: 6px; background: #27092F; border: 1px solid rgba(243,240,234,0.12); border-radius: 24px; padding: 16px 24px; min-width: 0;">
+<div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
+<svg width="44" height="51" viewBox="0 0 72 84" aria-hidden="true" style="flex: none;">
+<path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{f.h.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path>
+<path d="M36 2 68 12v8H4v-8z" fill="{{f.h.c2}}"></path>
+<text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{f.h.ink}}">{{f.h.short}}</text>
+</svg>
+<div style="display: flex; flex-direction: column; min-width: 0;">
+<span style="font-family: Furore, sans-serif; font-size: 21px; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{f.h.team}}</span>
+<span style="font-size: 16px; font-weight: 500; color: #CBB8D9;">{{f.h.player}}</span>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding-left: 58px;">
+<span style="background: #DED002; color: #1E0825; font-family: Furore, sans-serif; font-size: 14px; padding: 3px 10px; border-radius: 999px;">VS</span>
+<span style="flex: 1; height: 1px; background: rgba(243,240,234,0.12);"></span>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
+<svg width="44" height="51" viewBox="0 0 72 84" aria-hidden="true" style="flex: none;">
+<path d="M36 2 68 12v28c0 20-14 34-32 42C18 74 4 60 4 40V12z" fill="{{f.a.c1}}" stroke="#F3F0EA" stroke-opacity="0.35" stroke-width="2"></path>
+<path d="M36 2 68 12v8H4v-8z" fill="{{f.a.c2}}"></path>
+<text x="36" y="56" text-anchor="middle" font-family="Furore, sans-serif" font-size="18" fill="{{f.a.ink}}">{{f.a.short}}</text>
+</svg>
+<div style="display: flex; flex-direction: column; min-width: 0;">
+<span style="font-family: Furore, sans-serif; font-size: 21px; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{f.a.team}}</span>
+<span style="font-size: 16px; font-weight: 500; color: #CBB8D9;">{{f.a.player}}</span>
+</div>
+</div>
+</div>
+</sc-for>
+<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px; border: 2px dashed rgba(222,208,2,0.55); border-radius: 24px; padding: 16px 24px;">
+<span style="font-size: 14px; font-weight: 800; letter-spacing: 0.16em; color: #DED002;">AFTER YOUR MATCH</span>
+<span style="font-family: Furore, sans-serif; font-size: 24px; line-height: 1.15;">Post the score on tournax.auradev.in</span>
+<span style="font-size: 16px; font-weight: 500; color: #CBB8D9;">Add the full-time screenshot. Both players confirm it.</span>
+</div>
+</section>
+
+<footer style="position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(243,240,234,0.12);">
+<p style="margin: 0; font-family: Furore, sans-serif; font-size: 26px; line-height: 1.15; max-width: 560px;">The group chat ends here.<br><span style="color: #DED002;">The pitch decides.</span></p>
+<span style="font-size: 20px; font-weight: 600; color: #9E84AE;">tournax.auradev.in</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1080,"height":1350}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = {
+      acm: { team: 'AC Milan', short: 'ACM', c1: '#C8102E', c2: '#111111', ink: '#FFFFFF' },
+      mun: { team: 'Man Utd', short: 'MUN', c1: '#DA291C', c2: '#FBE122', ink: '#FFFFFF' },
+      rma: { team: 'Real Madrid', short: 'RMA', c1: '#FFFFFF', c2: '#FEBE10', ink: '#1E0825' },
+      liv: { team: 'Liverpool', short: 'LIV', c1: '#C8102E', c2: '#00B2A9', ink: '#FFFFFF' },
+      bar: { team: 'Barcelona', short: 'BAR', c1: '#A50044', c2: '#004D98', ink: '#FFFFFF' },
+      ars: { team: 'Arsenal', short: 'ARS', c1: '#EF0107', c2: '#FFFFFF', ink: '#FFFFFF' },
+      fcb: { team: 'Bayern', short: 'FCB', c1: '#DC052D', c2: '#0066B2', ink: '#FFFFFF' },
+      juv: { team: 'Juventus', short: 'JUV', c1: '#111111', c2: '#FFFFFF', ink: '#FFFFFF' },
+      psg: { team: 'Paris SG', short: 'PSG', c1: '#004170', c2: '#DA291C', ink: '#FFFFFF' },
+      int: { team: 'Inter', short: 'INT', c1: '#0068A8', c2: '#111111', ink: '#FFFFFF' },
+      che: { team: 'Chelsea', short: 'CHE', c1: '#034694', c2: '#FFFFFF', ink: '#FFFFFF' },
+      atm: { team: 'Atlético Madrid', short: 'ATM', c1: '#CB3524', c2: '#272E61', ink: '#FFFFFF' },
+      bvb: { team: 'Dortmund', short: 'BVB', c1: '#FDE100', c2: '#111111', ink: '#111111' },
+      nap: { team: 'Napoli', short: 'NAP', c1: '#12A0D7', c2: '#003C82', ink: '#FFFFFF' },
+    };
+    const side = (k, player) => ({ ...T[k], player });
+    const fixtures = [
+      { h: side('acm', 'Adhil'), a: side('mun', 'Rahul') },
+      { h: side('rma', 'Sameer'), a: side('liv', 'Faiz') },
+      { h: side('bar', 'Nikhil'), a: side('ars', 'Imran') },
+      { h: side('fcb', 'Vivek'), a: side('juv', 'Kiran') },
+      { h: side('psg', 'Arjun'), a: side('int', 'Jouhar') },
+      { h: side('che', 'Shahal'), a: side('atm', 'Sinan') },
+      { h: side('bvb', 'Jamshid'), a: side('nap', 'Khadar') },
+    ];
+    return { fixtures };
+  }
+}
+</script>
+</body>
+</html>
