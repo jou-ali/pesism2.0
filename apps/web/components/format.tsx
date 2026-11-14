@@ -25,7 +25,7 @@ export async function Format() {
 
         <ol className="format-strip" data-stagger>
           {STAGES.map((stage) => (
-            <li className="format-item card" data-reveal key={stage.title}>
+            <li className="format-item card card--interactive" data-reveal key={stage.title}>
               <span className="format-item__num" aria-hidden="true">{stage.num}</span>
               <h3>{stage.title}</h3>
               <p>{stage.body}</p>

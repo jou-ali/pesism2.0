@@ -114,7 +114,7 @@ export function MatchCard({
   return (
     <Link
       href={`/matches/${match.id}`}
-      className="match-card card card--tint"
+      className="match-card card card--tint card--interactive"
       style={tint}
       data-status={match.status}
       data-reveal

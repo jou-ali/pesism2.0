@@ -82,7 +82,7 @@ function RegPlayerCard({ player, index }: { player: SeasonPlayer; index: number 
   } as CSSProperties;
 
   return (
-    <Link href={`/players/${player.id}`} className="match-card card card--tint" style={tint} data-reveal>
+    <Link href={`/players/${player.id}`} className="match-card card card--tint card--interactive" style={tint} data-reveal>
       <div className="card__head">
         <span className="match-card__label">SPOT {String(index).padStart(2, '0')}</span>
         <span className="pill pill--success">Registered</span>
@@ -163,14 +163,26 @@ async function LeaguePhase({ competition, overrideMatchday }: { competition: Sea
       <section className="section matchday" id="matchday" aria-labelledby="matchday-title">
         <div className="container">
           <div className="section__head">
-            <p className="matchday__eyebrow">Matchday · Live</p>
+            <p className="matchday__eyebrow">Squad locked · Fixtures soon</p>
             <SplitHeading id="matchday-title" lines={['No hiding', 'this week.']} />
+            <p className="lead" data-reveal>
+              Registration&rsquo;s closed. Fixtures are being drawn up — here&rsquo;s who you&rsquo;re up against.
+            </p>
           </div>
-          <div className="panel" data-reveal>
-            <div className="competition-soon">
-              <p className="competition-soon__text">Fixtures aren&rsquo;t published yet.</p>
+
+          {!competition.players.length ? (
+            <div className="panel" data-reveal>
+              <div className="competition-soon">
+                <p className="competition-soon__text">Fixtures aren&rsquo;t published yet.</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="match-cards" data-stagger>
+              {competition.players.map((p, i) => (
+                <RegPlayerCard key={p.id} player={p} index={i + 1} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     );

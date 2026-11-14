@@ -1,10 +1,17 @@
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { computeStandings } from '@tournax/core';
 import { fetchSeasonCompetition } from '@/lib/season-competition';
 import { avatarSvg } from '@/lib/avatar';
+import { fallbackPaletteFor } from '@/lib/crest';
 import { SplitHeading } from './split-heading';
 import { UseIcon } from './icon';
 import { TeamCrest } from './team-crest';
+
+function hexWithAlpha(hex: string, alphaHex: string): string {
+  return `${hex}${alphaHex}`;
+}
 
 export async function PlayersCarousel() {
   const competition = await fetchSeasonCompetition();
@@ -42,9 +49,14 @@ export async function PlayersCarousel() {
                   const player = byId.get(row.playerId);
                   if (!player) return null;
                   const rate = row.played > 0 ? Math.round((row.won / row.played) * 100) : 0;
+                  const tint = {
+                    '--home-tint': hexWithAlpha(fallbackPaletteFor(player.teamName ?? 'Team pending')[0], '2e'),
+                  } as CSSProperties;
                   return (
-                    <article
-                      className="player"
+                    <Link
+                      href={`/players/${player.id}`}
+                      className="player card card--tint card--interactive"
+                      style={tint}
                       role="group"
                       aria-roledescription="slide"
                       aria-label={`${i + 1} of ${ordered.length}`}
@@ -73,9 +85,7 @@ export async function PlayersCarousel() {
                       </div>
                       <div className="player__body">
                         <div>
-                          <h3 className="player__name">
-                            <a href={`/players/${player.id}`}>{player.name}</a>
-                          </h3>
+                          <h3 className="player__name">{player.name}</h3>
                           <p className="player__tag">@{player.gamingUsername}</p>
                           <p className="player__tag" style={{ display: 'flex', alignItems: 'center', gap: '.4rem', color: 'var(--muted-foreground)' }}>
                             <TeamCrest teamName={player.teamName} crestUrl={player.crestUrl} size={18} />
@@ -97,7 +107,11 @@ export async function PlayersCarousel() {
                           </div>
                         </dl>
                       </div>
-                    </article>
+                      <div className="card__foot">
+                        <span className="match-card__foot-text">{rate}% win rate</span>
+                        <span className="card__foot-cta">View player &rarr;</span>
+                      </div>
+                    </Link>
                   );
                 })}
               </div>

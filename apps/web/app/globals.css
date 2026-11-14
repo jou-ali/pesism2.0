@@ -362,7 +362,6 @@ ul{list-style:none;margin:0;padding:0}
 @media (min-width:1100px){.match-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 .match-card{position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .25s var(--ease-out),border-color .25s var(--ease-out)}
-.match-card:hover{transform:translateY(-3px);border-color:var(--line)}
 .match-card[data-status="pending_confirmation"]{border-color:rgba(var(--color-accent-rgb),.4)}
 .match-card[data-status="disputed"]{border-color:rgba(var(--disputed-rgb),.5)}
 
@@ -438,7 +437,7 @@ body:has([data-page="team-setup"]) .header__cta{display:none}
 @media (min-width:1500px){.carousel{--per-view:4}}
 .carousel__viewport{overflow:hidden;border-radius:var(--r-xl);touch-action:pan-y}
 .carousel__track{display:flex;gap:var(--gap);transition:transform .9s var(--ease-out);will-change:transform}
-.player{flex:0 0 calc((100% - var(--gap) * (var(--per-view) - 1)) / var(--per-view));min-width:0;display:flex;flex-direction:column;transition:transform .3s var(--ease-out),border-color .3s var(--ease-out)}
+.player{flex:0 0 calc((100% - var(--gap) * (var(--per-view) - 1)) / var(--per-view));min-width:0;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .3s var(--ease-out),border-color .3s var(--ease-out)}
 .player__media{position:relative;aspect-ratio:4/4.2;overflow:hidden;background:var(--bg-2)}
 .player__media svg{width:100%;height:100%;transition:transform .5s var(--ease-out)}
 .player__photo{width:100%;height:100%;object-fit:cover;display:block}
@@ -578,8 +577,9 @@ fieldset.field legend{padding:0;margin-bottom:.45rem}
   .nav a:hover{color:var(--blue-2)}
   .menu-toggle:hover{background:var(--navy);transform:scale(1.06)}
   .menu-toggle:hover span:first-child{transform:translateX(3px)}
-  .format-item:hover{transform:translate3d(0,-6px,0);border-color:var(--green)}
-  .player:hover{transform:translate3d(0,-6px,0);border-color:rgba(var(--color-accent-rgb),.4)}
+  /* One shared hover-lift for every clickable/interactive card site-wide — match cards, spot
+     cards, fixtures, player cards, format steps all opt in via the .card--interactive class. */
+  .card--interactive:hover{transform:translateY(-3px);border-color:var(--line)}
   .player:hover .player__media svg{transform:scale(1.04)}
   .arrow-btn:hover{background:var(--bg-2);border-color:var(--green)}
   .arrow-btn--next:hover svg{transform:translate3d(4px,0,0)}
