@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, FixtureCard, CompactFixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, HomeAwayLegendLine, FixtureCard, CompactFixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getMatchdayPreviewData } from '@/lib/share/data';
 import type { Fixture } from '@/lib/share/types';
 

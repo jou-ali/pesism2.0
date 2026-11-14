@@ -1,5 +1,6 @@
 import { AdminPageHead } from '@/components/admin-page-head';
 import { ShareImageActions } from '@/components/share-image-actions';
+import { FIXTURE_HOME_AWAY_NOTE } from '@/lib/fixture-sides';
 import { listPosters } from '@/lib/share/registry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,8 @@ export default async function AdminSharePage() {
   return (
     <>
       <AdminPageHead eyebrow="WhatsApp posters" title="Share images" />
+
+      <p className="mb-8 max-w-3xl text-sm text-muted-foreground">{FIXTURE_HOME_AWAY_NOTE}</p>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posters.map((poster) => (

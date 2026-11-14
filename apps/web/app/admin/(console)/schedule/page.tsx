@@ -3,6 +3,7 @@ import { AdminApiStatus } from '@/components/admin-api-status';
 import { AdminScheduleMatchForm } from '@/components/admin-schedule-match-form';
 import { AdminPageHead } from '@/components/admin-page-head';
 import { ResponsiveList, type ResponsiveListColumn } from '@/components/admin-responsive-list';
+import { FIXTURE_HOME_AWAY_NOTE } from '@/lib/fixture-sides';
 import { listAdminFixtures, listRegistrations, type AdminMatchRow } from '@/lib/tournax-api';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -59,7 +60,9 @@ export default async function AdminSchedulePage() {
           <Card className="mb-8">
             <CardHeader>
               <CardTitle>Add a fixture</CardTitle>
-              <CardDescription>Pick matchday, home, and away. Published rows show on the public fixtures page.</CardDescription>
+              <CardDescription>
+                Pick matchday, home, and away. Published rows show on the public fixtures page. {FIXTURE_HOME_AWAY_NOTE}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <AdminScheduleMatchForm approved={approved} />

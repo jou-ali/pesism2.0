@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, PlayerPhoto, Shield, Chip, FitTeamName, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, HomeAwayLegendLine, PlayerPhoto, Shield, Chip, FitTeamName, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getSemiFinalsData } from '@/lib/share/data';
 import type { Side } from '@/lib/share/types';
 
@@ -18,9 +18,12 @@ const PHOTO_GAP = 20;
 const SIDE_WIDTH = (POSTER_CONTENT_WIDTH - CARD_PADDING * 2 - ROW_GAP * 2 - VS_SIZE) / 2;
 const COLUMN_WIDTH_PX = SIDE_WIDTH - PHOTO_WIDTH - PHOTO_GAP;
 
-function SfSide({ side, align }: { side: Side; align: 'left' | 'right' }) {
+function SfSide({ side, align, role }: { side: Side; align: 'left' | 'right'; role: 'home' | 'away' }) {
   const column = (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: align === 'right' ? 'flex-end' : 'flex-start', gap: 8, minWidth: 0, flex: 1 }}>
+      <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 2.5, textTransform: 'uppercase', color: '#DED002' }}>
+        {role === 'home' ? 'Home' : 'Away'}
+      </span>
       <Shield size={56} teamName={side.teamName} crestUrl={side.crestUrl} />
       <FitTeamName text={side.teamName} maxWidthPx={COLUMN_WIDTH_PX} max={28} min={18} align={align} />
       <span style={{ fontSize: 20, fontWeight: 500, color: '#CBB8D9' }}>{side.playerName}</span>
@@ -60,6 +63,7 @@ export async function GET(req: Request) {
             <span>SEMI</span>
             <span style={{ color: '#DED002' }}>FINALS</span>
           </div>
+          <HomeAwayLegendLine />
           <SubtitleLine>{data.deadline}</SubtitleLine>
         </div>
 
@@ -81,9 +85,9 @@ export async function GET(req: Request) {
             >
               <span style={{ fontSize: 15, fontWeight: 800, letterSpacing: 3, color: '#9E84AE' }}>{tie.label}</span>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 16, width: '100%' }}>
-                <SfSide side={tie.home} align="left" />
+                <SfSide side={tie.home} align="left" role="home" />
                 <Chip text="VS" shape="circle" size={76} fontSize={26} fontFamily="Furore" bg="#DED002" color="#1E0825" />
-                <SfSide side={tie.away} align="right" />
+                <SfSide side={tie.away} align="right" role="away" />
               </div>
             </div>
           ))}

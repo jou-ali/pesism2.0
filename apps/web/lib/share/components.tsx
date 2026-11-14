@@ -277,9 +277,32 @@ export function SubtitleLine({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Matches admin fixtures: home on the left, away on the right. */
+export function HomeAwayLegendLine() {
+  return <SubtitleLine>Left = Home · Right = Away</SubtitleLine>;
+}
+
+function SideRoleTag({ role, align }: { role: 'home' | 'away'; align: 'left' | 'right' }) {
+  return (
+    <span
+      style={{
+        fontSize: 11,
+        fontWeight: 800,
+        letterSpacing: 2.5,
+        textTransform: 'uppercase',
+        color: YELLOW,
+        alignSelf: align === 'right' ? 'flex-end' : 'flex-start',
+      }}
+    >
+      {role === 'home' ? 'Home' : 'Away'}
+    </span>
+  );
+}
+
 function SideBlock({
   side,
   align,
+  role,
   crestSize = 72,
   fitMax,
   fitMin,
@@ -289,6 +312,7 @@ function SideBlock({
 }: {
   side: Fixture['home'];
   align: 'left' | 'right';
+  role: 'home' | 'away';
   crestSize?: number;
   fitMax: number;
   fitMin: number;
@@ -298,6 +322,7 @@ function SideBlock({
 }) {
   const info = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, alignItems: align === 'right' ? 'flex-end' : 'flex-start' }}>
+      <SideRoleTag role={role} align={align} />
       <FitTeamName text={side.teamName} maxWidthPx={textWidthPx} max={fitMax} min={fitMin} align={align} />
       <span style={{ fontSize: playerFontSize, fontWeight: 500, color: MUTED_2 }}>{side.playerName}</span>
     </div>
@@ -350,11 +375,11 @@ export function FixtureCard({
   const textWidthPx = (cardWidthPx - vsColumnWidth) / 2 - crestSize - gap;
   return (
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-      <SideBlock side={fixture.home} align="left" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
+      <SideBlock side={fixture.home} align="left" role="home" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
       <div style={{ display: 'flex', flexDirection: 'row', width: vsColumnWidth, flexShrink: 0, justifyContent: 'center' }}>
         <Chip text="VS" shape="circle" size={vsSize} fontSize={Math.round(vsSize * 0.36)} fontFamily="Furore" bg="#DED002" color="#1E0825" />
       </div>
-      <SideBlock side={fixture.away} align="right" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
+      <SideBlock side={fixture.away} align="right" role="away" crestSize={crestSize} gap={gap} textWidthPx={textWidthPx} fitMax={26} fitMin={18} />
     </div>
   );
 }
@@ -367,11 +392,11 @@ export function CompactFixtureCard({ fixture, cardWidthPx }: { fixture: Fixture;
   const textWidthPx = (cardWidthPx - vsColumnWidth) / 2 - crestSize - gap;
   return (
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-      <SideBlock side={fixture.home} align="left" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
+      <SideBlock side={fixture.home} align="left" role="home" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
       <div style={{ display: 'flex', flexDirection: 'row', width: vsColumnWidth, flexShrink: 0, justifyContent: 'center' }}>
         <Chip text="VS" fontFamily="Furore" fontSize={16} bg={YELLOW} color={YELLOW_INK} padding="5px 12px" letterSpacing={0} />
       </div>
-      <SideBlock side={fixture.away} align="right" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
+      <SideBlock side={fixture.away} align="right" role="away" crestSize={crestSize} playerFontSize={17} gap={gap} textWidthPx={textWidthPx} fitMax={22} fitMin={16} />
     </div>
   );
 }

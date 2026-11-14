@@ -68,9 +68,14 @@ function hexWithAlpha(hex: string | null, alphaHex: string): string | undefined 
   return `${hex}${alphaHex}`;
 }
 
-function Side({ side, muted }: { side: MatchCardSide; muted: boolean }) {
+function Side({ side, muted, role }: { side: MatchCardSide; muted: boolean; role: 'home' | 'away' }) {
   return (
-    <div className="match-card__side" style={{ opacity: muted ? 0.6 : 1 }}>
+    <div
+      className="match-card__side"
+      style={{ opacity: muted ? 0.6 : 1 }}
+      data-side={role}
+    >
+      <span className="match-card__role">{role === 'home' ? 'Home' : 'Away'}</span>
       <TeamCrest teamName={side.teamName} crestUrl={side.crestUrl} size={64} className="match-card__crest" />
       <p className="match-card__team">{side.teamName ?? 'Team pending'}</p>
       <div className="match-card__player">
@@ -125,7 +130,7 @@ export function MatchCard({
       </div>
 
       <div className="match-card__body">
-        <Side side={home} muted={awayWon} />
+        <Side side={home} muted={awayWon} role="home" />
         <div className="match-card__center">
           {hasScore ? (
             <span className="match-card__score" style={{ opacity: counted ? 1 : 0.7 }}>
@@ -137,7 +142,7 @@ export function MatchCard({
             <span className="match-card__vs">VS</span>
           )}
         </div>
-        <Side side={away} muted={homeWon} />
+        <Side side={away} muted={homeWon} role="away" />
       </div>
 
       <div className="card__foot">

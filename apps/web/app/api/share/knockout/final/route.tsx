@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, Shield, Chip, FitTeamName, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, HomeAwayLegendLine, Shield, Chip, FitTeamName, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getFinalPreviewData } from '@/lib/share/data';
 import { fallbackPaletteFor } from '@/lib/crest';
 import type { Side } from '@/lib/share/types';
@@ -18,7 +18,7 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
 }
 
-function FinalPanel({ side, align }: { side: Side; align: 'left' | 'right' }) {
+function FinalPanel({ side, align, role }: { side: Side; align: 'left' | 'right'; role: 'home' | 'away' }) {
   const [primaryColor] = fallbackPaletteFor(side.teamName);
   const tint = hexToRgba(primaryColor, align === 'left' ? 0.45 : 0.4);
   const radius = align === 'left' ? '24px 0 0 24px' : '0 24px 24px 0';
@@ -55,7 +55,8 @@ function FinalPanel({ side, align }: { side: Side; align: 'left' | 'right' }) {
           ...(align === 'left' ? { left: 24 } : { right: 24 }),
         }}
       >
-        {side.photoUrl ? '' : 'PLAYER PHOTO'}
+        {role === 'home' ? 'HOME' : 'AWAY'}
+        {side.photoUrl ? '' : ' · PHOTO TBC'}
       </span>
       <div
         style={{
@@ -97,11 +98,12 @@ export async function GET(req: Request) {
             <span>THE</span>
             <span style={{ color: '#DED002' }}>FINAL</span>
           </div>
+          <HomeAwayLegendLine />
           <SubtitleLine>{data.dateLine}</SubtitleLine>
         </div>
 
         <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'stretch', gap: 0 }}>
-          <FinalPanel side={data.home} align="left" />
+          <FinalPanel side={data.home} align="left" role="home" />
           <div
             style={{
               flexShrink: 0,
@@ -119,7 +121,7 @@ export async function GET(req: Request) {
             <img src={trophy} width={170} />
             <Chip text="VS" shape="circle" size={84} fontSize={30} fontFamily="Furore" bg="#DED002" color="#1E0825" />
           </div>
-          <FinalPanel side={data.away} align="right" />
+          <FinalPanel side={data.away} align="right" role="away" />
         </div>
       </PosterFrame>
     ),

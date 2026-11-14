@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: '/#format', label: 'Format' },
   { href: '/#standings', label: 'Table' },
   { href: '/fixtures', label: 'Fixtures' },
+  { href: '/rules', label: 'Rules' },
   { href: '/#players', label: 'Players' },
 ];
 

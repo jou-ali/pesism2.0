@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { loadShareFonts, loadTrophyDataUri } from '@/lib/share/assets';
-import { PosterFrame, SubtitleLine, FixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
+import { PosterFrame, SubtitleLine, HomeAwayLegendLine, FixtureCard, POSTER_CONTENT_WIDTH } from '@/lib/share/components';
 import { getQuarterFinalsData } from '@/lib/share/data';
 
 export const runtime = 'nodejs';
@@ -24,6 +24,7 @@ export async function GET(req: Request) {
             <span>QUARTER</span>
             <span style={{ color: '#DED002' }}>FINALS</span>
           </div>
+          <HomeAwayLegendLine />
           <SubtitleLine>{data.deadline}</SubtitleLine>
         </div>
 
